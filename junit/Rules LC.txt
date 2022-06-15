@@ -1,0 +1,104 @@
+LC 1:
+
+ import static org.junit.Assert.*;
+ import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+public class ShipmentJunit {
+	ShipmentBO shipmentBO;
+	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+
+	
+	@Before
+	public void init() {
+		shipmentBO = new ShipmentBO();
+	}
+	
+	@Test
+	public void testCalculatAverageWithoutZero() {
+		//fill the code
+		assertEquals("10.0",Double.toString(shipmentBO.calculateAveragePrice(30, 3)));
+		assertEquals(String.valueOf(-12.0), String.valueOf(shipmentBO.calculateAveragePrice(-144, 12)));
+		assertEquals(String.valueOf(0.0), String.valueOf(shipmentBO.calculateAveragePrice(-12, 144)));
+		assertEquals(String.valueOf(1.0), String.valueOf(shipmentBO.calculateAveragePrice(999999999, 999999999)));
+		assertEquals(String.valueOf(-1.0), String.valueOf(shipmentBO.calculateAveragePrice(-999999999, 999999999)));
+	}
+
+	@Test
+	public void testCalculateAverageWithZero() {
+		//fill the code
+		//exception.expect(ArithmeticException.class);
+		try{
+			shipmentBO.calculateAveragePrice(100, 0);
+			fail();
+		} catch(ArithmeticException e){
+			assertEquals(e.getMessage(),"/ by zero");
+		}
+		try {
+			shipmentBO.calculateAveragePrice(-123, 0);
+			fail();
+			} catch (ArithmeticException ar) {
+			assertEquals(ar.getMessage().toString(), "/ by zero");
+
+			}
+		
+	}
+	
+	@After
+	public void destroy() {
+		shipmentBO = null;
+	}
+}
+
+
+--------------------------------------------------------------------------------------------------------------------
+LC2:
+
+import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+
+import static org.hamcrest.Matchers.hasProperty;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Test;
+
+public class RoleBOJUnit {
+	RoleBO roleBO;
+	MockRoleDAO mrdao;
+	
+	@Before
+	public void intialize() {
+		//fill the code
+		roleBO = new RoleBO();
+	}
+	
+	@Test
+	public void testGetAllRoles() {
+		//fill the code
+		mrdao = new MockRoleDAO();
+		ArrayList<Role> roleList = new ArrayList<Role>();
+		roleList.add(new Role(1, "name1"));
+		roleList.add(new Role(2,"name2"));
+		assertThat(mrdao.fetchAllRoles(), contains(hasProperty("id", equalTo(1)),hasProperty("id", equalTo(2))));		
+	}
+}
+
+class MockRoleDAO extends RoleDAO{
+	@Override
+	public ArrayList<Role> fetchAllRoles(){
+		ArrayList<Role> roleList = new ArrayList<Role>();
+		roleList.add(new Role(1, "name1"));
+		roleList.add(new Role(2,"name2"));
+		return roleList;
+	}
+}

@@ -1,0 +1,84 @@
+QA2QE Junit Code Challenge 3
+Custom AssertThat
+
+public class ShipmentJunit {
+	
+	public void ShipmentEntityObjectCreation() {
+		//fill code here.
+	}
+
+	public void testShipmentByShipper() {
+		//fill code here.
+	}
+	public void testShipmentByAgent() {
+		//fill code here.
+	}
+	
+}
+------------------------------------------
+QA2QE Junit Code Challenge 4
+Defining @Tes-
+----------------------------------------
+QA2QE Junit Code Challenge 5
+Enhancing tests
+-------------------------------
+ Custom Assert That
+ Junit - Email Validation
+
+public class ShipmentJunit {
+	
+	public void createObjectForEmailGenerator() {
+		//fill code here.
+	}
+	
+	 public void testEmailId() {
+		 //fill code here.
+	 
+	}
+}
+
+	class EmailIdChecker {
+	 	//fill code here.
+	}
+
+-----------
+ QA2QE Junit L2C Code Challenge 4
+ Defining @test_3
+ Mode of Delivery
+-------------
+
+
+QA2QE Junit L2C Code Challenge 5
+ Enhancing tests
+ JDBC-User Role
+
+
+public class UserBOJUnit {
+	
+	public void setUp() {
+		//fill the code
+	}
+
+	public void testGetAllUsers() {
+		//fill the code
+	}
+}
+
+// Implement the MockUserDAO class
+--------------
+
+
+QA2QE Junit L2C Code Challenge 7
+ Number Equality Object Equality
+ Total amount
+
+
+public class TaxJUnit {
+	TaxBO taxBO;
+	public void createObjectForTaxBO() {
+		//fill the code
+	}
+	public void testTaxes() {
+		//fill the code
+	}
+}

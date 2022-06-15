@@ -1,0 +1,54 @@
+Code 1:
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class CustomerJUnit {
+	CustomerBO customer;
+
+	@Before
+	public void setUp() {
+		customer = new CustomerBO();
+	}
+
+	@Test
+	public void testFindNextCustomerId() {
+		//fill the code
+		Integer[] customerID1 = {7,8,6,5};
+		assertThat(8,is(customer.findNextCustomerId(customerID1.length, customerID1)));
+		Integer[] customerID2 = {4,2,5,3};
+		assertThat(5,is(customer.findNextCustomerId(customerID2.length, customerID2)));
+	}
+}
+
+
+Code 2:
+
+import org.junit.*;
+import java.util.*;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.MatcherAssert.assertThat;
+public class PortJUnit {
+	PortBO portBO;
+	ArrayList<Port> list;
+	
+	@Before
+	public void createObjectForPort()
+	{
+		//fill code here.
+		portBO = new PortBO();		
+	}
+	
+	@Test
+	public void testPortDetails()
+	{	
+		//fill code here.
+		list = new ArrayList<Port>();
+		list.add(new Port(1,"hydport","Hyd"));
+		portBO.addElementAtSpecfiedPosition(list, 1, "2,chnport,Chn");
+		assertThat(list,hasSize(2));
+	}
+}

@@ -1,0 +1,611 @@
+DButils.java
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+public class DBUtils {
+
+    public static Connection getConnection() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+        ResourceBundle rb = ResourceBundle.getBundle("mysql");
+        String url = rb.getString("db.url");
+        String username = rb.getString("db.username");
+        String password = rb.getString("db.password");
+        Connection connect = null;
+        Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+        // fill the code
+        connect = DriverManager.getConnection(url, username, password);
+
+        return connect;
+        
+    }
+}
+
+
+
+==============================================================
+
+IItemsDAO.java
+
+
+import java.util.List;
+
+public interface IItemDAO{
+public List<Item> getAllItems();
+}
+
+
+=============================================================================
+
+InsufficienntQuantityException.java
+
+
+ public class InsufficientQuantityException extends Exception{
+ // fill the code
+private static final long serialVersionUID = 1L;
+InsufficientQuantityException(String message){
+super(message);
+}
+}
+
+
+=================================================================
+
+IPurchaseOrderDAO.java
+
+import java.util.List;
+
+public interface  IPurchaseOrderDAO{
+public Long  createPurchaseOrder(PurchaseOrder purchaseOrderObj);
+}
+
+===================================================================
+
+Item.java
+
+
+public class Item {
+    private Long id;
+    private String name;
+    private Integer availableQuantity;
+    private Double price;
+    
+    public Item(){}
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Integer getAvailableQuantity() {
+        return availableQuantity;
+    }
+    public void setAvailableQuantity(Integer availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
+    public Double getPrice() {
+        return price;
+    }
+    public void setPrice(Double price) {
+        this.price = price;
+    }   
+}
+
+
+
+========================================================================
+
+ItemBO.java
+
+
+import java.util.List;
+
+public class ItemBO {
+public List<Item> getAllItems() {
+IItemDAO itemdao = new ItemDAO();
+return itemdao.getAllItems();
+}
+public Item getItemById(Long itemId) {
+ItemDAO itemdao = new ItemDAO();
+return itemdao.getItemById(itemId);
+}
+}
+
+
+================================================================================
+
+ItemDAO.java
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ItemDAO implements IItemDAO{
+
+    public List<Item> getAllItems() {
+    List<Item> items = new ArrayList<Item>();
+   
+    try {
+Connection connect = DBUtils.getConnection();
+PreparedStatement stmt = connect.prepareStatement("select * from item");
+ResultSet result = stmt.executeQuery();
+while(result.next())
+{
+Item item = new Item();
+item.setId(result.getLong("id"));
+item.setAvailableQuantity(result.getInt("available_quantity"));
+item.setName(result.getString("name"));
+item.setPrice(result.getDouble("price"));
+items.add(item);
+}
+return items;
+} catch (InstantiationException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (IllegalAccessException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (ClassNotFoundException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (SQLException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+}
+   
+   
+    return items;
+        
+    }
+    
+    
+    
+    public Item getItemById(Long itemId) {
+
+    Item item = null;
+    try {
+    Connection connect = DBUtils.getConnection();
+PreparedStatement stmt = connect.prepareStatement("select * from item where id=?");
+stmt.setLong(1, itemId);
+ResultSet result = stmt.executeQuery();
+   
+while(result.next()){
+item = new Item();
+item.setId(result.getLong("id"));
+item.setAvailableQuantity(result.getInt("available_quantity"));
+item.setName(result.getString("name"));
+item.setPrice(result.getDouble("price"));
+}
+} catch (SQLException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (InstantiationException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (IllegalAccessException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (ClassNotFoundException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+}
+    
+   
+    return item;
+    }
+    
+   
+}
+
+
+
+==========================================================================
+
+Main.java
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream.GetField;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+public class Main {
+
+    public static void main(String args[]) throws IOException, ParseException {
+        
+        PurchaseOrderBO purchaseOrderBO = new PurchaseOrderBO();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        ItemBO itemBO = new ItemBO();
+        //fill the code
+        List<Item> itemList = itemBO.getAllItems();
+        System.out.println(String.format("%-15s %-25s %-25s %-15s","Item ID","Name","Available Quantity","Price"));
+        for(int count=0;count<itemList.size();count++)
+        {
+        System.out.println(String.format("%-15s %-25s %-25s %-15s",itemList.get(count).getId(),itemList.get(count).getName(),itemList.get(count).getAvailableQuantity(),itemList.get(count).getPrice()));
+        }
+        System.out.println("Creating new purchase order...");
+        
+        System.out.println("Enter Customer Name:");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String customerName = reader.readLine();
+        System.out.println("Enter Contact Number:");
+        String mobile = reader.readLine();
+        System.out.println("Enter Order Date(yyyy-MM-dd):");
+        Date orderDate = sdf.parse(reader.readLine());
+        System.out.println("Enter all the Item ID you want to purchase:");
+        String[] itemStr = reader.readLine().split(",");
+        System.out.println("Enter number of quantities:");
+        String[] quantitiesStr = reader.readLine().split(",");
+        
+        Integer[] quantity = new Integer[quantitiesStr.length];
+        for(int count=0;count<quantitiesStr.length;count++)
+        {
+        quantity[count] = Integer.parseInt(quantitiesStr[count]);
+        }
+        
+        List<Item> list = new ArrayList<Item>();
+        for(int count=0;count<itemStr.length;count++)
+        {
+        Item item =new Item();
+        item.setId(Long.parseLong(itemStr[count]));
+        int quantity1 = 0;
+        double price = 0;
+        for(int count1=0;count1<itemList.size();count1++)
+            {
+        long id1 =  itemList.get(count1).getId();
+        if(id1 == Long.parseLong(itemStr[count]))
+        {
+        item.setName(itemList.get(count1).getName());
+        quantity1=itemList.get(count1).getAvailableQuantity();
+        price = itemList.get(count1).getPrice();
+        }
+            }
+       
+        item.setAvailableQuantity(quantity1);
+        item.setPrice(price);
+       
+        list.add(item);
+        }
+        
+        PurchaseOrderBO purchaseOrder = new PurchaseOrderBO();
+        
+        
+        Long createdId=0l;
+try {
+createdId = purchaseOrder.createPurchaseOrder(list, quantity, customerName, mobile, orderDate);
+System.out.println("Order placed with id "+createdId);
+} catch (InsufficientQuantityException e) {
+// TODO Auto-generated catch block
+System.out.println(e.getMessage());
+}
+        
+         // fill the code
+            
+   
+    }
+    
+}
+
+
+
+===============================================================================
+
+OrderLine.java
+
+
+
+public class OrderLine {
+
+    private Long id;
+    private Item item;
+    private PurchaseOrder purchaseOrder;
+    private Double price;
+    private Integer quantity;
+public OrderLine(){
+}
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public PurchaseOrder getPurchaseOrder() {
+        return purchaseOrder;
+    }
+
+    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
+        this.purchaseOrder = purchaseOrder;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }   
+}
+
+
+
+==========================================================================
+
+PurchaseOrder.java
+
+
+
+import java.util.Date;
+import java.util.List;
+
+public class PurchaseOrder {
+
+    private Long id;
+    private Date orderDate;
+    private Date createdDate;
+    private Integer numberOfItems;
+    private Double totalAmount;
+    private String customerName;
+    private String mobileNumber;
+    private List<OrderLine> orderLineList;
+    
+    public PurchaseOrder(){
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Integer getNumberOfItems() {
+        return numberOfItems;
+    }
+
+    public void setNumberOfItems(Integer numberOfItems) {
+        this.numberOfItems = numberOfItems;
+    }
+    
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public List<OrderLine> getOrderLineList() {
+        return orderLineList;
+    }
+
+    public void setOrderLineList(List<OrderLine> orderLineList) {
+        this.orderLineList = orderLineList;
+    }   
+}
+
+
+
+==========================================================================
+
+PurchaseOrderBO.java
+
+
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class PurchaseOrderBO {
+
+
+    public Long createPurchaseOrder(List<Item> items, Integer[] quantity,String customerName,String mobileNumber,Date orderDate) throws InsufficientQuantityException {
+   
+    List<OrderLine> lines = new ArrayList<OrderLine>();
+    double totalAmount = 0;
+   
+    for(int count=0; count<items.size();count++)
+    {
+   
+    if(quantity[count] > items.get(count).getAvailableQuantity())
+    {
+    throw new InsufficientQuantityException("Item "+items.get(count).getName()+" is unavailable");
+   
+    }
+   
+    totalAmount = totalAmount+items.get(count).getPrice();
+   
+    Item item = new Item();
+    item.setName(items.get(count).getName());
+    item.setId(items.get(count).getId());
+    item.setAvailableQuantity(items.get(count).getAvailableQuantity());
+    item.setPrice(items.get(count).getPrice());
+    OrderLine line = new OrderLine();
+    //line.setId(id);
+    line.setItem(item);
+    line.setPrice(items.get(count).getPrice());
+    line.setPurchaseOrder(null);
+    line.setQuantity(quantity[count]);
+   
+    lines.add(line);
+   
+   
+    }
+   
+   
+    PurchaseOrder order = new PurchaseOrder();
+order.setCustomerName(customerName);
+order.setCreatedDate(new Date());
+//order.setId(id);
+order.setMobileNumber(mobileNumber);
+order.setNumberOfItems(items.size());
+order.setOrderDate(orderDate);
+order.setOrderLineList(lines);
+order.setTotalAmount(totalAmount);
+PurchaseOrderDAO purchaseOrderDao = new PurchaseOrderDAO();
+long id = purchaseOrderDao.createPurchaseOrder(order);
+    return id;
+        
+
+        
+    }
+    
+}
+
+
+
+==============================================================================
+
+PurchaseOrderDAO.java
+
+
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+
+
+
+
+public class PurchaseOrderDAO implements IPurchaseOrderDAO //fill the code
+{
+
+    public Long createPurchaseOrder(PurchaseOrder purchaseOrderobj) {
+        
+   Long pod=null;
+    ResultSet purchaseOrderGeneratedKeys = null;
+    try {
+Connection conn = DBUtils.getConnection();
+Statement stmt=conn.createStatement();
+String itemQuery = "insert into item(name,available_quantity,price) values (?,?,?)";
+String orderLineQuery = "insert into order_line(price,quantity ,item_id,purchase_order_id) values (?,?,?,?)";
+String purchaseOrderQuery = "insert into purchase_order(order_date,created_date,number_of_items,total_amount,customer_name,mobile_number) values (?,?,?,?,?,?)";
+PreparedStatement  itemStmt = conn.prepareStatement(itemQuery);
+PreparedStatement  orderStmt = conn.prepareStatement(orderLineQuery);
+PreparedStatement  purchaseOrderStmt = conn.prepareStatement(purchaseOrderQuery);
+purchaseOrderStmt.setDate(1, new Date(new java.util.Date().getTime()));
+purchaseOrderStmt.setDate(2, new java.sql.Date(purchaseOrderobj.getOrderDate().getTime()));
+purchaseOrderStmt.setInt(3, purchaseOrderobj.getNumberOfItems());
+purchaseOrderStmt.setDouble(4, purchaseOrderobj.getTotalAmount());
+purchaseOrderStmt.setString(5, purchaseOrderobj.getCustomerName());
+purchaseOrderStmt.setString(6, purchaseOrderobj.getMobileNumber());
+purchaseOrderStmt.execute();
+purchaseOrderGeneratedKeys = purchaseOrderStmt.getGeneratedKeys();
+purchaseOrderGeneratedKeys.next();
+long purchaseOrderId = purchaseOrderGeneratedKeys.getLong(1);
+List<OrderLine> list = purchaseOrderobj.getOrderLineList();
+for(int cnt=0; cnt<list.size();cnt++)
+{
+Item itm = list.get(cnt).getItem();
+itemStmt.setString(1, itm.getName());
+itemStmt.setInt(2, itm.getAvailableQuantity());
+int qty=itm.getAvailableQuantity()-list.get(cnt).getQuantity();
+itemStmt.setDouble(3, itm.getPrice());
+//boolean itemResult = itemStmt.execute();
+String sel="select id from item where name='"+itm.getName()+"'";
+ResultSet oderResult = conn.createStatement().executeQuery(sel);
+oderResult.next();
+String upd="update item set available_quantity="+qty+" where name='"+itm.getName()+"'" ;
+stmt.executeUpdate(upd);
+
+orderStmt.setDouble(1, list.get(cnt).getPrice());
+orderStmt.setInt(2, list.get(cnt).getQuantity());
+//oderResult.next();
+orderStmt.setInt(3, oderResult.getInt("id"));
+orderStmt.setInt(4, (int) purchaseOrderId);
+orderStmt.execute();
+}
+pod=purchaseOrderId;
+return purchaseOrderId;
+} catch (InstantiationException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (IllegalAccessException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (ClassNotFoundException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+} catch (SQLException e) {
+// TODO Auto-generated catch block
+e.printStackTrace();
+}
+
+   
+    return pod;
+    }
+}
+
+
+

@@ -1,0 +1,99 @@
+import static org.junit.Assert.*;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
+public class PasswordExceptionJunit {
+	
+	UserBO userBO;
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
+	@Before
+	public void userObjectCreation() {
+		userBO = new UserBO();
+	}
+	
+	@Test
+	public void testPasswordException() throws WeakPasswordException {
+	  //fill the code
+		userBO.validatePassword(new User("xyz", "xyzw@123", "abc"));
+		userBO.validatePassword(new User("xyz", "xyzw!123", "abc"));
+		userBO.validatePassword(new User("xyz", "xywz#123", "abc"));
+		userBO.validatePassword(new User("xyz", "xygz$123", "abc"));
+		userBO.validatePassword(new User("xyz", "xhyz%123", "abc"));
+		try {
+			userBO.validatePassword(new User("Justin", "justinbeiber885", "Washington D.C."));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+
+			try {
+			userBO.validatePassword(new User("xyz", "ghnyh123", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "123", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "sampl@1", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+
+			try {
+			userBO.validatePassword(new User("xyz", "jsedfr123<>", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "jukln12311111111", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "@", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "@", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "#", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "%", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+			try {
+			userBO.validatePassword(new User("xyz", "#@!$%^&**()", "address"));
+			fail();
+			} catch (WeakPasswordException e) {
+			assertEquals(e.toString(), ("WeakPasswordException: Password is weak"));
+			}
+	}
+	
+}

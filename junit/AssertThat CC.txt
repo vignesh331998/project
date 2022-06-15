@@ -1,0 +1,21 @@
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class DocumentJUnit {
+	DocumentBO document;
+	
+	@Before
+	public void intialize(){
+		document = new DocumentBO();
+	}
+	
+	@Test
+	public void testFindVirus() {
+		//fill the code
+		assertThat("vir",is(document.findVirus("abc vir ghyh", "vir")));
+		assertThat("vir1",is(document.findVirus("ughhg xdfsdfvir1 ghyh", "  vir1")));
+	}
+}

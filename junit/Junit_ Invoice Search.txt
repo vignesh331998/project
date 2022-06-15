@@ -1,0 +1,288 @@
+import java.util.regex.Pattern;
+public class CreditCardPayment  extends Payment// fill the code
+{
+                private String cardNumber;
+                private String cvv;
+                private String cardName;
+                public CreditCardPayment() {
+                }
+                public CreditCardPayment(String name, Double amount, String cardNumber, String cvv, String cardName) {
+                                super(name, amount);
+                                this.cardNumber = cardNumber;
+                                this.cvv = cvv;
+                                this.cardName = cardName;
+                }
+                public String getCardNumber() {
+                                return cardNumber;
+                }
+                public void setCardNumber(String cardNumber) {
+                                this.cardNumber = cardNumber;
+                }
+                public String getCvv() {
+                                return cvv;
+                }
+                public void setCvv(String cvv) {
+                                this.cvv = cvv;
+                }
+                public String getCardName() {
+                                return cardName;
+                }
+                public void setCardName(String cardName) {
+                                this.cardName = cardName;
+                }
+                @Override
+                public Double calculateTotalAmount() throws InvalidPaymentException{ 
+                if(!Pattern.matches("^[0-9]{16}$",cardNumber)||!Pattern.matches("^[0-9]{3}$",cvv))
+                {
+                                throw new InvalidPaymentException("Invalid Card Details");
+                }
+                else
+                {
+                                Double d=super.amount+(0.1*super.amount);
+                                return d;
+                }
+                }
+}
+
+-----------------------------------
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+public class DbConnection {
+                public static Connection getConnection() throws ClassNotFoundException, SQLException {        
+                                ResourceBundle rb= ResourceBundle.getBundle("mysql");
+                                String url = rb.getString("db.url");
+                                String username = rb.getString("db.username");
+                                String password = rb.getString("db.password");
+                                //fill the code
+                                Class.forName("com.mysql.jdbc.Driver");  
+                                Connection con=DriverManager.getConnection(  
+                                url,username,password);  
+                                return con;                          
+                }
+}
+--------------------------------
+public class InvalidPaymentException extends Exception {
+                // fill the code
+                
+                /**
+                * 
+                 */
+                private static final long serialVersionUID = 1L;
+                public InvalidPaymentException(String message)
+                {
+                                super(message);
+                }
+}
+------------------------------
+public class Invoice {
+                private Integer id;
+                private String customerName;
+                private Integer paymentAttempts;
+                private Double totalAmount;
+                private Double balance;
+                private String status;
+                public Invoice() {                              
+                }
+                public Invoice(Integer id, String customerName, Integer paymentAttempts,Double totalAmount, Double balance, String status) {
+                                super();
+                                this.id = id;
+                                this.customerName = customerName;
+                                this.paymentAttempts = paymentAttempts;
+                                this.totalAmount = totalAmount;
+                                this.balance = balance;
+                                this.status = status;
+                }
+                public Integer getId() {
+                                return id;
+                }
+
+                public void setId(Integer id) {
+                                this.id = id;
+                }
+                public String getCustomerName() {
+                                return customerName;
+                }
+                public void setCustomerName(String customerName) {
+                                this.customerName = customerName;
+                }
+                public Integer getPaymentAttempts() {
+                                return paymentAttempts;
+                }
+                public void setPaymentAttempts(Integer paymentAttempts) {
+                                this.paymentAttempts = paymentAttempts;
+                }
+                public Double getTotalAmount() {
+                                return totalAmount;
+                }
+                public void setTotalAmount(Double totalAmount) {
+                                this.totalAmount = totalAmount;
+                }
+                public Double getBalance() {
+                                return balance;
+                }
+                public void setBalance(Double balance) {
+                                this.balance = balance;
+                }
+                public String getStatus() {
+                                return status;
+                }
+                public void setStatus(String status) {
+                                this.status = status;
+                }
+                @Override
+                public String toString() {
+                                // TODO Auto-generated method stub
+                                return String.format("%-5s %-15s %-20s %-15s %-10s %s\n",id, customerName, paymentAttempts, totalAmount, balance, status);
+                }
+}
+
+------------------------------
+import java.sql.SQLException;
+import java.util.List;
+public class InvoiceBO {
+                InvoiceDAO invoiceDAO=new InvoiceDAO();
+                public List<Invoice> getAllInvoice() throws ClassNotFoundException, SQLException {
+                                //fill the code
+                                return invoiceDAO.getAllInvoices();
+                }
+                public void updateInvoiceDetails(int id,Double amount) throws ClassNotFoundException, SQLException {
+                                //fill the code
+                invoiceDAO.updateInvoiceDetails(id, amount);
+                }
+                
+}
+
+------------------------
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+public class InvoiceDAO {
+                public List<Invoice> getAllInvoices() throws ClassNotFoundException, SQLException{
+                                // fill the code
+                                Connection con=DbConnection.getConnection();
+                                List<Invoice> listOfInvoices = new ArrayList<>();
+                                try {
+                                Statement stmt=con.createStatement();  
+                                ResultSet resultSet=stmt.executeQuery("select * from invoice");  
+                                                while (resultSet.next()) {
+                                                                listOfInvoices.add(new Invoice(resultSet.getInt("id"),resultSet.getString("customer_name"),resultSet.getInt("payment_attempts"),resultSet.getDouble("total_amount"),resultSet.getDouble("balance"),resultSet.getString("status")));
+                                                }
+                                }catch(Exception e){ 
+                                                con.close();                        
+                                System.out.println(e);
+                                }
+                                return listOfInvoices;
+                                }  
+                public void updateInvoiceDetails(Integer invoiceId, Double amount) throws ClassNotFoundException, SQLException{
+                                // fill the code
+                                Connection con=DbConnection.getConnection();
+                                Connection con1=DbConnection.getConnection();
+                                int count=0;
+                                try {
+                                Statement stmt=con.createStatement();
+                                ResultSet resultSet=stmt.executeQuery("select * from invoice where id="+invoiceId);
+                                                while (resultSet.next()) {
+                                                                count=resultSet.getInt("payment_attempts");
+                                                }
+                                                count=count+1;
+                                                Statement stmt1=con1.createStatement();
+                                                stmt1.executeUpdate("update invoice set payment_attempts="+count+",balance="+amount+" where id="+invoiceId);
+                                }catch(Exception e){ 
+                                                con.close();                        
+                                System.out.println(e);
+                                }
+                                }  
+                }
+------------------------
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+public class Main {
+                public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, ParseException, InvalidPaymentException {
+                                BufferedReader buff = new BufferedReader(new InputStreamReader(System.in));
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                System.out.println("Invoice Details:");
+                                System.out.format("%-5s %-15s %-20s %-15s %-10s %s\n","ID","Customer Name","Payment Attempts","Total Amount","Balance","Status");                 
+                                try {
+                                //fill the code
+                                InvoiceBO invoiceBO=new InvoiceBO();
+                                List<Invoice> listOfInvoices=invoiceBO.getAllInvoice();
+                                for(Invoice invoice:listOfInvoices)
+                                {
+                                                System.out.format("%-5s %-15s %-20s %-15s %-10s %s\n",invoice.getId(),invoice.getCustomerName(),invoice.getPaymentAttempts(),invoice.getTotalAmount(),invoice.getBalance(),invoice.getStatus());
+                                }
+                                System.out.println("Enter the invoice id to pay :");
+                                Integer id = Integer.parseInt(buff.readLine());
+                                System.out.println("Enter the name :");
+                                String name = buff.readLine();                   
+                                System.out.println("Enter the amount :");
+                                Double amount = Double.parseDouble(buff.readLine());
+                                System.out.println("Enter the card number :");
+                                String cardNo = buff.readLine();                
+                                System.out.println("Enter the cvv :");
+                                String cvv = (buff.readLine());
+                                System.out.println("Enter the card name :");
+                                String cardName = buff.readLine();
+                                CreditCardPayment creditCardPayment=new CreditCardPayment(name, amount, cardNo, cvv, cardName);
+                                Double totalAmount=creditCardPayment.calculateTotalAmount();
+                                // fill the code
+                                Double balanceAmount=0.0;
+                                System.out.printf("Total Amount to be paid is %.2f\n",totalAmount);
+                                //fill the code
+                                for(Invoice invoice:listOfInvoices)
+                                {
+                                                if(invoice.getId()==id)
+                                                {
+                                                                balanceAmount=invoice.getBalance()-amount;
+                                                }
+                                }
+                                invoiceBO.updateInvoiceDetails(id, balanceAmount);
+                                System.out.printf("The balance amount is %.2f",balanceAmount);
+                                }
+                                catch(InvalidPaymentException ipe)
+                                {
+                                                System.out.println(ipe);
+                                }
+                                catch(Exception e)
+                                {
+                                                System.out.println(e);
+                                }
+                }              
+}
+
+---------------------------
+public abstract class Payment {
+                protected String accountHolderName;
+                protected Double amount;
+                public Payment() {
+                }
+                public Payment(String accountHolderName, Double amount) {
+                                super();
+                                this.accountHolderName = accountHolderName;
+                                this.amount = amount;
+                }
+                public String getAccountHolderName() {
+                                return accountHolderName;
+                }
+                public void setAccountHolderName(String accountHolderName) {
+                                this.accountHolderName = accountHolderName;
+                }
+                public Double getAmount() {
+                                return amount;
+                }
+                public void setAmount(Double amount) {
+                                this.amount = amount;
+                }
+                // fill the code
+                public abstract Double calculateTotalAmount() throws InvalidPaymentException;
+}
+

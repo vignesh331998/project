@@ -1,0 +1,75 @@
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasProperty;
+import org.junit.Before;
+public class PurchaseOrderJunit {
+       PurchaseOrderBO b;
+       SimpleDateFormat sdf;
+       
+       //fill the code
+
+@Rule
+     public ExpectedException exception = ExpectedException.none();
+
+       @Before
+       public void intial() {
+              b = new PurchaseOrderBO();
+              sdf = new SimpleDateFormat("dd-mm-yyyy");
+       }
+       
+       
+       @Test
+       public void testInsufficientQuantityException() throws ParseException{
+              List<Item> itemlist =  new ArrayList<Item>();
+              itemlist.add(new Item((long)1,"Voltas 1.4 Ton 3",10,27900.00));
+              itemlist.add(new Item((long)2,"Onida 1.5 Ton 3 Star",20,32490.00));
+              try {
+b.createPurchaseOrder(itemlist, new Integer[] {15,5}, "xyz", "6654412255",sdf.parse("27-05-2018"));
+
+fail();
+              } catch (InsufficientQuantityException e) {
+                     // TODO Auto-generated catch block
+                   assertEquals("InsufficientQuantityException: Item Voltas 1.4 Ton 3 is unavailable",e.toString());
+           }            
+       }
+       
+       
+       @Test
+       public void testCreatePurchaseOrder() throws ParseException{             
+       List<Item> itemlist =  new ArrayList<Item>();
+              itemlist.add(new Item((long)1,"Voltas 1.4 Ton 3",10,27900.00));
+              itemlist.add(new Item((long)2,"Onida 1.5 Ton 3 Star",20,32490.00));
+              try {
+                     b.createPurchaseOrder(itemlist, new Integer[] {5,6}, "xyz", "6654412255",sdf.parse("27-05-2018"));
+              } catch (InsufficientQuantityException e) {
+                     // TODO Auto-generated catch block
+                     e.printStackTrace();
+              } 
+              List<PurchaseOrder> purchaseOrders= b.getAllPurchaseOrder();
+              assertThat(purchaseOrders,contains(hasProperty("customerName",is("xyz"))));
+       }
+       
+       
+       @Test
+       public void testRemoveItem() throws ParseException{
+                   List<Item> itemlist =  new ArrayList<Item>();
+             itemlist.add(new Item((long)3,"Micromax Split AC",30,25000.00));        
+           try {
+                  b.createPurchaseOrder(itemlist, new Integer[] {6}, "abc", "6654512255",sdf.parse("28-05-2018"));
+           } catch (InsufficientQuantityException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+           }
+                   b.removeItemFromPurchaseOrder(1);
+              List<PurchaseOrder> purchaseOrders= b.getAllPurchaseOrder();
+              assertFalse(purchaseOrders.contains(hasProperty("customerName",is("abc"))));
+       }
+}
+

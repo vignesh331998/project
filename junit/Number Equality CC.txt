@@ -1,0 +1,36 @@
+
+import java.util.ArrayList;
+
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
+public class CargoJunit{
+	CargoBO cargoBO;
+	@Before
+	public void init() {
+		//fill the code
+		cargoBO = new CargoBO();
+	}
+
+	@Test
+	public void testFindSpecificStatus() {
+		//fill the code
+		Cargo cargos1 = new Cargo("abc","xyz",10.25f,11.25f,"cleared");
+		Cargo cargos2 = new Cargo("abc1","xyz1",10.05f,16.65f,"cleared");
+		Cargo cargos3 = new Cargo("abc2","xyz2",50.15f,62.85f,"pending");
+		Cargo cargos4 = new Cargo("abc3","xyz3",55.15f,62.55f,"pending");
+		Cargo cargos5 = new Cargo("abc4","xyz4",55.96f,12.65f,"pending");
+		Cargo[] cargos = {cargos1,cargos2,cargos3,cargos4,cargos5};
+		assertArrayEquals(new Cargo[] {cargos1,cargos2},cargoBO.findSpecificStatus(cargos, cargos.length, "cleared"));
+		assertArrayEquals(new Cargo[] {cargos3,cargos4,cargos5},cargoBO.findSpecificStatus(cargos, cargos.length, "pending"));
+		
+	}
+
+	@After
+	public void destroy() {
+		//fill the code
+		cargoBO = null;
+	}
+}

@@ -1,0 +1,56 @@
+Email Validation:(Not working)
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import junit.framework.TestCase;
+
+public class ValidationJunit {
+	ValidationBO validationBO;
+	@Before
+	public void init() {
+		//fill the code
+		validationBO = new ValidationBO();
+	}
+	
+	@Test
+	public void testInvalidEmail() {
+		//fill the code
+		assertNotNull(validationBO);
+		assertFalse(validationBO.validateEmail("abc@gmailcom"));
+		assertFalse(validationBO.validateEmail("a4522ail.com"));
+		assertFalse(validationBO.validateEmail("abcg77ilcom"));
+		assertFalse(validationBO.validateEmail("abc125@gma2588"));
+		assertFalse(validationBO.validateEmail("abc125@.in"));
+		assertFalse(validationBO.validateEmail("@.in"));
+		assertFalse(validationBO.validateEmail(""));
+		assertFalse(validationBO.validateEmail("abc&gmailcom"));
+		assertFalse(validationBO.validateEmail("1225555"));
+		assertFalse(validationBO.validateEmail("abc$125@yahoo.in"));
+		//assertEquals(false, validationBO.validateEmail("abc-gmail.com"));
+		//assertEquals(false, validationBO.validateEmail("abcgmail.com"));
+		//assertEquals(false, validationBO.validateEmail("abcgmailcom"));
+	}
+	
+	@Test
+	public void testValidEmail() {
+		//fill the code
+		assertNotNull(validationBO);
+		assertTrue(validationBO.validateEmail("abc@gmail.com"));
+		assertTrue(validationBO.validateEmail("abc125@yahoo.in"));
+		assertTrue(validationBO.validateEmail("abc125@fc.org"));
+		//assertEquals(true, validationBO.validateEmail("abc@gmail.com"));
+		//assertEquals(true, validationBO.validateEmail("abc1@gmail.in"));
+	}
+	
+	
+	
+	@After
+	public void destroy() {
+		//fill the code
+		validationBO = null;
+	}
+}

@@ -1,0 +1,1722 @@
+Sub LC_1_Shipping_Dates_Of_Customer()
+------------------JunitCheck.java-------------------
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.Assert.*;
+import junit.framework.TestCase;
+import static org.hamcrest.Matchers.*;
+
+import org.junit.Before;
+import org.junit.Test;
+public class JunitCheck {
+    DateFormatBO bo;
+    @Before
+    public void createObject() {
+        //fill code here.
+        bo= new DateFormatBO();
+    }
+    @Test
+    public void testDateFormat() {
+         List<String> d = new ArrayList<String>();;
+        List<String> date = new ArrayList<String>();
+        d.add("07/01/2020");
+        bo.convertToCorrectDateFormat(date, d);
+        assertThat(date, containsInAnyOrder("07-01-2020"));
+    }
+
+}
+
+    
+    
+    
+End Sub
+
+Sub LC_2_Shipment_entity()
+ Junit.java
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+
+import org.junit.Test;
+public class Junit {
+ShipmentEntityBO sbo;
+ArrayList<ShipmentEntity> list;
+ShipmentEntity se,se1;
+    @Before
+    public void createObjectForShipmentEntity() {
+        sbo = new ShipmentEntityBO();
+    }
+    @Test
+    public void testListofShipmentEntity() {
+        list = new ArrayList<ShipmentEntity>();
+
+        for(int i=0;i<2;i++) {
+            String shipmentDetails = "103,Mike Hastings,3514537165,540000300,Sydney";
+            sbo.addShipmentEntityToList(list, shipmentDetails);
+        }
+         se = new ShipmentEntity(103,"Mike Hastings","3514537165",540000300L,"Sydney");
+         se1 = new ShipmentEntity(103,"Mike Hastings","3514537165",540000300L,"Sydney");
+
+
+        assertThat(list,Matchers.containsInAnyOrder(se,se1));
+    }
+}
+
+
+End Sub
+Sub LC_3_Most_Frequent_Customers()
+-------------CustomerJunit.java
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+public class CustomerJunit {
+CustomerBO bo;
+CommodityIdentification ci;
+Commodity co;
+
+Customer c;
+    @Before
+    public void init() {
+        //fill the code
+        bo =new CustomerBO();
+    }
+
+    @Test
+    public void testFrequentCustomers() {
+        List<Commodity> cList = new ArrayList<Commodity>();
+        String[] arr;
+        String[] data = {"suren,suren@gmail.com,suren,car,12345,100,150","suren,suren@gmail.com,suren,car,12345,100,150","suren,suren@gmail.com,suren,car,12345,100,150","suren,suren@gmail.com,suren,car,12345,100,150"};
+        for(int i=0;i<data.length;i++){
+            arr = data[i].split(",");
+            c = new Customer(arr[0], arr[1]);
+            ci = new CommodityIdentification(arr[2], arr[3], arr[4], c);
+            co = new Commodity(Double.parseDouble(arr[5]), Double.parseDouble(arr[6]), ci);
+            cList.add(co);
+        }
+        List<Customer> cq = new CustomerBO().findFrequentCustomers(cList);
+        assertThat(cq,containsInAnyOrder(hasProperty("name", is("suren"))));
+    }
+
+
+    public void destroy() {
+        //fill the code
+    }
+
+}
+
+End Sub
+
+Sub CC_1_Filter_Shipment_Entity_by_type()
+------------ShipmentJunit.java-------------
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.Matchers.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJunit {
+    ShipmentEntityBO shipmentEntityBO;
+    @Before
+    public void ShipmentEntityObjectCreation() {
+         shipmentEntityBO = new ShipmentEntityBO();
+    }
+    @Test
+    public void testShipmentByShipper() {
+        ArrayList<ShipmentEntity> list = new ArrayList<ShipmentEntity>();
+        String[] data = {"101,Hill gosling,2365265667,8000,Agent","105,RAM,1514154212,40000,Agent","106,madhu,982387402,20000,Shipper"};
+        for(int i=0;i<data.length;i++) {
+            String[] values = data[i].split(",");
+            list.add(new ShipmentEntity(Integer.parseInt(values[0]),values[1],values[2],Long.parseLong(values[3]),values[4]));
+        }
+        List<ShipmentEntity> filterdList = shipmentEntityBO.filterShipmentByType(list, "Shipper");
+        assertThat(filterdList,hasSize(1) );
+
+
+    }
+    @Test
+    public void testShipmentByAgent() {
+        ArrayList<ShipmentEntity> list = new ArrayList<ShipmentEntity>();
+        String[] data = {"101,Hill gosling,2365265667,8000,Agent","105,RAM,1514154212,40000,Agent","106,madhu,982387402,20000,Shipper"};
+        for(int i=0;i<data.length;i++) {
+            String[] values = data[i].split(",");
+            list.add(new ShipmentEntity(Integer.parseInt(values[0]),values[1],values[2],Long.parseLong(values[3]),values[4]));
+        }
+        List<ShipmentEntity> filterdList = shipmentEntityBO.filterShipmentByType(list, "Agent");
+        assertThat(filterdList,hasSize(2) );
+
+    }
+
+}
+
+
+End Sub
+Sub LC_1_Item_Details()
+---------------ItemJUnit.java-----------------------
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ItemJUnit {
+    ItemBO itemBO;
+    @Before
+    public void createObjectForItemBO() {
+        itemBO = new ItemBO();
+    }
+    @Test
+    public void testUniqueItems() {
+        String[] data = {"mobile","glass","mobile"};
+        List<String> itemName = new ArrayList<String>();
+        for(int i=0;i<data.length;i++){
+            itemName.add(data[i]);
+        }
+        List<String> itemArray = itemBO.getUniqueItems(itemName);
+        assertThat(itemArray,is(hasItem("mobile")));
+    }
+    @Test
+    public void testMaxItems() {
+        String[] data = {"mobile","glass","mobile"};
+        List<String> itemName = new ArrayList<String>();
+        for(int i=0;i<data.length;i++){
+            itemName.add(data[i]);
+        }
+        List<String> itemArray = itemBO.getMaxItems(itemName);
+        assertThat(itemArray,is(hasItem("mobile")));
+    }
+    @Test
+    public void testMinItems() {
+        String[] data = {"mobile","glass","mobile"};
+        List<String> itemName = new ArrayList<String>();
+        for(int i=0;i<data.length;i++){
+            itemName.add(data[i]);
+        }
+        List<String> itemArray = itemBO.getMinItems(itemName);
+        assertThat(itemArray,is(hasItem("glass")));
+    }
+}
+End Sub
+
+Sub LC_2_Port_Details()
+-----------------------------PortJunit.java
+import java.util.ArrayList;
+import java.util.List;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.*;
+import org.junit.Before;
+import org.junit.Test;
+public class PortJUnit {
+    PortBO portBO ;
+    ArrayList<Port> port;
+
+    @Before
+    public void createObjectForPort()
+    {
+        portBO = new PortBO();
+    }
+
+@Test
+    public void testPortDetails()
+    {     Port port1;
+        port = new ArrayList<Port>();
+        String[] data = {"101,A,Chennai","102,B,Vizag"};
+        for(int i=0;i<data.length;i++){
+            String portDetails[] = data[i].split(",");
+            port1 = new Port(Integer.parseInt(portDetails[0]),portDetails[1],portDetails[2]);
+          port.add(port1);
+         }
+        portBO.addElementAtSpecfiedPosition(port, 3, "103,D,Mumbai");
+        assertThat(port,hasSize(3));
+
+    }
+}
+
+End Sub
+
+Sub LC_3_Next_Customer_Id()
+-----------------------------CustomerJUnit.java---------
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Test;
+public class CustomerJUnit {
+    CustomerBO customer;
+
+    @Before
+    public void setUp() {
+        customer = new CustomerBO();
+    }
+
+    @Test
+    public void testFindNextCustomerId() {
+
+
+            String[] data = {"123","456","789"};
+            Integer[] customerId = new Integer[data.length];
+            for (int i = 0; i < data.length; i++) {
+                customerId[i] = Integer.parseInt(data[i]);
+            }
+            Integer max = customer.findNextCustomerId(data.length, customerId);
+            assertThat(customerId,is(not(max)));
+
+    }
+}
+
+End Sub
+
+Sub CC_2_Duplicate_Customer_Id()
+------------------CustomerJunit.java
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
+
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.*;
+import org.junit.Test;
+
+public class CustomerJunit {
+    List<Integer> userId;
+    Set<Integer> repeat;
+     CustomerBO bo;
+@Before
+    public void init() {
+
+        bo = new CustomerBO();
+    }
+
+    @Test
+    public void testDuplicateCustomerId() {
+        String[] data = {"123","456","123"};
+         userId = new ArrayList<Integer>();
+         repeat = new HashSet<Integer>();
+        for (int i = 0; i < data.length; i++) {
+            userId.add(Integer.parseInt(data[i]));
+        }
+//      Collections.sort(userId);
+        repeat = new CustomerBO().findDuplicateCustomerId(data.length, userId);
+        assertThat(repeat,containsInAnyOrder(Integer.parseInt("123")));
+    }
+
+    @After
+    public void destroy() {
+        userId = null;
+        repeat =null;
+        bo=null;
+    }
+}
+
+
+End Sub
+
+Sub LC_1_Build_a_shipment_report_using_List()
+------------------ShipmentJUnit.java---------------
+import static org.junit.Assert.assertThat;
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.Test;
+
+
+
+public class ShipmentJUnit {
+
+    String shipmentDetail;
+
+    @Test
+    public void testComputeTotalProfit() throws ParseException {
+        List<Shipment> shipmentList = new ArrayList<Shipment>();
+        String[] data= {"Computer,6000.00,500,100,08/02/2020"};
+        int n = data.length;
+        for (int i = 0; i < n; i++) {
+            String shipmentDetails = data[i];
+            String splited[] = shipmentDetails.split(",");
+            Date arivalDate = new SimpleDateFormat("dd/MM/yyyy").parse(splited[4]);
+            shipmentList.add(new Shipment(splited[0], Double
+                    .parseDouble(splited[1]), Double.parseDouble(splited[2]),
+                    Double.parseDouble(splited[3]), arivalDate));
+        }
+        ShipmentBO bo = new ShipmentBO();
+        double validateProfit =  bo.computeTotalProfit(shipmentList);
+        assertThat(validateProfit,EqualityCheck.isEqualityCheck());
+    }
+
+}
+class EqualityCheck extends TypeSafeMatcher<Double> {
+
+
+    @Override
+    public boolean matchesSafely(Double arg0) {
+
+        return arg0==6000.00;
+    }
+    @Override
+    public void describeTo(Description arg0) {
+        // TODO Auto-generated method stub
+        arg0.appendValue(arg0);
+    }
+
+    public static Matcher<Double> isEqualityCheck() {
+        return new EqualityCheck();
+    }
+}
+
+End Sub
+
+Sub LC_2_Date_Validation()
+-------------------DateJUnit.java------------
+import java.text.ParseException;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.*;
+
+import static org.junit.Assert.assertThat;
+public class DateJUnit {
+    DateValidationBO dateValidationBO;
+    @Before
+    public void createObjectForCustomerBO() {
+        //fill the code
+        dateValidationBO = new DateValidationBO();
+    }
+    @Test
+    public void testFindValidDate() throws ParseException {
+        String date = "24/03/2020";
+        String d = dateValidationBO.findValidDate(date);
+        assertThat(d,DateChecker.isDateChecker());
+    }
+
+
+}
+
+class DateChecker extends TypeSafeMatcher<String> {
+
+    @Override
+    public boolean matchesSafely(String arg0) {
+        return arg0.equalsIgnoreCase("03/12/2021");
+//      return false;
+    }
+
+    @Override
+    public void describeTo(Description arg0) {
+        // TODO Auto-generated method stub
+        arg0.appendValue(arg0);
+
+    }
+
+    public static Matcher<String> isDateChecker() {
+        return new DateChecker();
+    }
+}
+
+End Sub
+
+Sub LC_3_Invoice_Id_Validation()
+-------------------InvoiceJunit.java-----------------------
+import org.junit.*;
+
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+public class InvoiceJunit {
+
+    InvoiceBO invoiceBO;
+    String data,invoicedata;
+
+    @Before
+    public void init() {
+        invoiceBO = new InvoiceBO();
+    }
+
+    @Test
+    public void testGeneratedInvoiceId() {
+        data = "CUR00001";
+        invoicedata = invoiceBO.generateInvoiceId(data);
+        assertThat(invoicedata, CheckInvoiceId.isCheckInvoiceId());
+    }
+
+    @After
+    public void destroy() {
+        invoiceBO =null;
+        invoicedata=null;
+        data = null;
+    }
+}
+
+class CheckInvoiceId extends TypeSafeMatcher<String>{
+
+    @Override
+    public void describeTo(Description arg0) {
+        // TODO Auto-generated method stub
+        arg0.appendValue(arg0);
+    }
+
+    @Override
+    protected boolean matchesSafely(String arg0) {
+        // TODO Auto-generated method stub
+        return arg0.equalsIgnoreCase("CURR00001");
+    }
+    public static Matcher<String> isCheckInvoiceId() {
+        return new CheckInvoiceId();
+    }
+}
+
+
+End Sub
+
+Sub CC_3_Camel_Case_Conversion()
+-----------------------------------CamelCaseJUnit--------------------
+import org.junit.*;
+
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+public class CamelCaseJUnit {
+    CamelCaseBO camelCaseBO;
+
+    @Before
+    public void createObjectForCamelCaseBO() {
+        camelCaseBO = new CamelCaseBO();
+    }
+    @Test
+    public void testCamelCase() {
+         String data = "cApe haWkE haRboUr";
+         String cameldata = camelCaseBO.toCamelCase(data);
+         assertThat(cameldata, CamelCaseChecker.isCamelCaseChecker());
+    }
+
+}
+
+class CamelCaseChecker extends TypeSafeMatcher<String>{
+
+    @Override
+    public void describeTo(Description arg0) {
+        // TODO Auto-generated method stub
+        arg0.appendValue(arg0);
+    }
+
+    @Override
+    protected boolean matchesSafely(String arg0) {
+        // TODO Auto-generated method stub
+        return arg0.equalsIgnoreCase("capeHawkeHarbour");
+    }
+    public static Matcher<String> isCamelCaseChecker() {
+        return new CamelCaseChecker();
+    }
+
+}
+
+End Sub
+
+Sub LC_1_Evaluate_Grade_for_Shipping_Company()
+------------------------ShipmentJUnit.java--------------------
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJUnit {
+    ShipmentBO shipmentBo;
+    int countries;
+    int shipmentpermonth;
+
+    @Before
+    public void setup() {
+        shipmentBo = new ShipmentBO();
+    }
+
+    @Test
+    public void testEvaluateGrade_invalidInput() {
+        countries=-1;
+        shipmentpermonth=-1;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("Invalid Input"));
+    }
+
+    @Test
+    public void testEvaluateGrade_gradeA() {
+        countries=151;
+        shipmentpermonth=1501;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("A"));
+    }
+
+    @Test
+    public void testEvaluateGrade_gradeB() {
+        countries=126;
+        shipmentpermonth=1201;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("B"));
+    }
+
+    @Test
+    public void testEvaluateGrade_gradeC() {
+        countries=101;
+        shipmentpermonth=1001;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("C"));
+    }
+
+    @Test
+    public void testEvaluateGrade_gradeD() {
+        countries=76;
+        shipmentpermonth=701;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("D"));
+    }
+
+    @Test
+    public void testEvaluateGrade_gradeE() {
+        countries=0;
+        shipmentpermonth=0;
+        String grade = shipmentBo.evaluateGrade(countries, shipmentpermonth);
+        assertTrue(grade.equals("E"));
+
+    }
+}
+
+End Sub
+Sub LC_2_Junit_Distance_between_two_ports()
+--------------------------------ShipmentJunit.java
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+
+public class ShipmentJunit {
+
+    ShipmentBO bo;
+     int port1,port2;
+    @Before
+    public void createObjectForShipmentBO()
+    {
+        bo = new ShipmentBO();
+    }
+    @Test
+    public void testfindNearestPort()
+    {
+        port1 = 100;
+        port2 = 100;
+        int portDetaisl = bo.findNearestPort(port1,port2);
+        assertTrue(portDetaisl==0);
+
+    }
+
+}
+
+End Sub
+Sub LC_3_JUnit_AssertEquals()
+--------------------CompanyJunit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+public class CompanyJunit {
+
+    CompanyBO companyBO;
+    int wt,dis;
+    @Before
+    public void init(){
+        companyBO = new CompanyBO();
+    }
+
+    @Test
+    public void testValidDiscount() {
+        wt = 90;
+        dis = 200;
+        String data = companyBO.hasDiscount(wt, dis);
+        assertEquals("Datex shipping offers discount", data);
+    }
+
+    @Test
+    public void testInvalidDiscount() {
+        wt = 100;
+        dis = 500;
+        String data = companyBO.hasDiscount(wt, dis);
+        assertEquals("Datex shipping offers no discount", data);
+    }
+}
+
+End Sub
+Sub LC_4_Valuable_Customer()
+---------------------CustomerJunit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+public class CustomerJunit {
+    CustomerBO customerbo;
+    int noOfShipments;
+    @Before
+    public void createObjectForCustomerBO(){
+        customerbo = new CustomerBO();
+
+    }
+
+    @Test
+    public void testValuableCustomer() {
+        noOfShipments = 21;
+        String data = customerbo.findValuableCustomerOrNot(noOfShipments);
+        assertEquals("Valuable customer", data);
+
+    }
+
+    @Test
+    public void testNonValuableCustomer() {
+        noOfShipments = 10;
+        String data = customerbo.findValuableCustomerOrNot(noOfShipments);
+        assertEquals("Not a valuable customer", data);
+    }
+
+    @Test
+    public void testInvalidShipment() {
+        noOfShipments = -1;
+        String data = customerbo.findValuableCustomerOrNot(noOfShipments);
+        assertEquals("Invalid Input", data);
+    }
+
+}
+
+End Sub
+
+Sub CC_4_Mode_of_Delivery()
+--------------------------ShipmentJunit
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+public class ShipmentJunit {
+
+    ShipmentBO shipmentBO;
+    int noOfDays;
+    double rate;
+    String deliveryType;
+
+    @Before
+    public void init() {
+        shipmentBO = new ShipmentBO();
+    }
+
+    @Test
+    public void testPriority() {
+        rate = 100.00;
+        deliveryType = "Priority";
+        noOfDays =1;
+        rate = shipmentBO.findRate(rate, deliveryType, noOfDays);
+        assertEquals("300.00",String.format("%.2f", rate));
+    }
+
+    @Test
+    public void testNormal() {
+        rate = 100.00;
+        deliveryType = "Normal";
+        noOfDays =1;
+        rate = shipmentBO.findRate(rate, deliveryType, noOfDays);
+        assertEquals("100.00",String.format("%.2f", rate));
+    }
+
+}
+
+End Sub
+
+Sub LC_1_Arithmetic_Exception()
+---------ShipmentJunit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.*;
+public class ShipmentJunit {
+    ShipmentBO shipmentBO;
+    int contPrice,noOfItem;
+    @Before
+    public void init() {
+        shipmentBO = new ShipmentBO();
+    }
+    @Test
+    public void testCalculatAverageWithoutZero() {
+        contPrice = 200;
+        noOfItem = 100;
+        double data = shipmentBO.calculateAveragePrice(contPrice,noOfItem);
+        assertEquals("2.00", String.format("%.2f", data));
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testCalculateAverageWithZero() {
+        contPrice = 100;
+        noOfItem = 0;
+        double data = shipmentBO.calculateAveragePrice(contPrice,noOfItem);
+    }
+
+    @After
+    public void destroy() {
+        shipmentBO = null;
+    }
+}
+
+End Sub
+Sub LC_2_Invalid_Role_Exception()
+-----------------------RoleJUnit.java
+import static org.junit.Assert.assertEquals;
+import org.junit.*;
+
+public class RoleJUnit {
+    RoleBO roleBO;
+    int userId ;
+    String name;
+    int roleId;
+    User user;
+    @Before
+    public void createObjectForRoleBO() {
+        roleBO = new RoleBO();
+    }
+    @Test
+    public void testIsRolePresent() throws InvalidRoleException {
+        Role.loadRoles();
+        userId =1;
+        name = "sam";
+        roleId = 10;
+        user = new RoleBO().isRolePresent(userId, name, roleId);
+        assertEquals("sam", user.getName());
+    }
+    @Test(expected = InvalidRoleException.class)
+    public void testIsRolePresent_Exception() throws InvalidRoleException {
+        Role.loadRoles();
+        userId =1;
+        name = "sam";
+        roleId = 1;
+        user = new RoleBO().isRolePresent(userId, name, roleId);
+    }
+}
+End Sub
+
+Sub LC_1_Average_weight_of_items_in_container()
+---------------ShipmentJUnit.java
+import static org.junit.Assert.*;
+import org.junit.*;
+public class ShipmentJUnit {
+    double delta = 0.01;
+    int n1,n2;
+    double wt1,wt2;
+    ShipmentBO shipment;
+
+    @Before
+    public void setup() {
+        shipment = new ShipmentBO();
+    }
+
+    @Test
+    public void testCalculateAverage() {
+        n1=1;
+        wt1=100.00;
+        n2=2;
+        wt2=100.00;
+        delta = shipment.calculateAverage(n1, wt1, n2, wt2);
+        assertEquals("100.00",String.format("%.2f", delta));
+    }
+    @After
+    public void tearDown() {
+        shipment = null;
+
+    }
+}
+
+End Sub
+Sub LC_2_Grammar_Validation()
+----------------------GrammerCheckJUnit.java
+import static org.junit.Assert.*;
+import org.junit.*;
+public class GrammerCheckJUnit {
+    GrammerCheckBO grammerCheckBO;
+    @Before
+    public void createObjectForGrammerCheckBO() {
+        grammerCheckBO = new GrammerCheckBO();
+    }
+    @Test
+    public void testGrammmer() {
+        String sentence = "she was a only child";
+        String correctSentence=grammerCheckBO.checkGrammer(sentence);
+        assertEquals("she was an only child",correctSentence);
+    }
+}
+
+End Sub
+Sub LC_3_Round_Off_numbers()
+--------------------RoundOffJUnit.java
+import static org.junit.Assert.*;
+import org.junit.*;
+public class RoundOffJUnit {
+    RoundOffBO roundOffBO;
+    @Before
+    public void createObjectForRoundOffBO() {
+        roundOffBO =  new RoundOffBO();
+    }
+    @Test
+    public void testRoundOffValue() {
+        int value = 5;
+        int finalvalue = roundOffBO.getRoundOffValue(value);
+        assertEquals(10,finalvalue);
+    }
+}
+End Sub
+Sub LC_4_Shipment_Delivery()
+-------------------ShipmentJunit.java
+import static org.junit.Assert.*;
+
+import java.text.ParseException;
+
+import org.junit.*;
+public class ShipmentJunit {
+
+    ShipmentBO shipmentBO;
+    String acDate, ExDate;
+    @Before
+    public void init() {
+        shipmentBO =  new ShipmentBO();
+    }
+
+    @Test
+    public void testDeliveredOnTime() throws ParseException {
+        acDate = "2020-08-05";
+        ExDate = "2020-08-05";
+        String deliveryStatus = shipmentBO.findDeliveryType(ExDate, acDate);
+        assertEquals("Delivered on time",deliveryStatus);
+    }
+
+    @Test
+    public void testDeliveredOnDelay() throws ParseException {
+        acDate = "2020-08-06";
+        ExDate = "2020-08-05";
+        String deliveryStatus = shipmentBO.findDeliveryType(ExDate, acDate);
+        assertEquals("Delayed",deliveryStatus);
+    }
+
+    @Test
+    public void testDeliveredInAdvance() throws ParseException {
+        acDate = "2020-08-04";
+        ExDate = "2020-08-05";
+        String deliveryStatus = shipmentBO.findDeliveryType(ExDate, acDate);
+        assertEquals("Delivered in advance",deliveryStatus);
+    }
+    @After
+    public void destroy() {
+        shipmentBO = null;
+    }
+
+}
+
+End Sub
+Sub CC_6_Probable_Shipment_Number()
+--------------------------ShipmentJUnit.java
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJUnit {
+    ShipmentBO shipmentBO;
+    List<Integer> resultantList;
+    Integer srange ;
+    Integer erange;
+    @Before
+    public void objectCeration()
+    {
+         shipmentBO = new ShipmentBO();
+    }
+    @Test
+    public void testAllPossibleShipmentNumber()
+    {
+        srange = 3;
+        erange = 6;
+        resultantList = shipmentBO.findAllPossibleShipmentNumber(srange, erange);
+        assertThat(resultantList,hasItem(3));
+    }
+
+
+}
+
+End Sub
+Sub LC_1_Cargo_Object_Equality()
+---------------------------CargoJUnit.java
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import static org.junit.Assert.*;
+import org.junit.*;
+public class CargoJUnit {
+    Cargo cargo,cargo1;
+    @Before
+    public void createObjectForCargo() {
+         cargo =  new Cargo();
+         cargo1 =  new Cargo();
+    }
+    @Test
+    public void testCargoDetails() {
+        String name = "Sam";
+        String desc  ="Cargo Container";
+        double length = 150.00;
+        double width  = 100.00;
+        cargo = new CargoBO().cargoDetails(name,desc,length,width);
+//      cargo1 = new CargoBO().cargoDetails(name,desc,length,width);
+//      boolean isEqual1 = EqualsBuilder.reflectionEquals(cargo, cargo1);
+        assertEquals(Boolean.TRUE,equals(cargo));
+    }
+    public boolean equals(Object o)
+    {
+        Cargo rolert = (Cargo) o;
+          return(rolert.getName() == "Sam");
+
+    }
+
+}
+End Sub
+
+Sub LC_2_Customer_count_(Number_equality)
+------------------------CustomerJUnit.java
+import java.util.ArrayList;
+import static org.junit.Assert.*;
+import org.junit.*;
+
+public class CustomerJUnit {
+    CustomerBO customerBO;
+    ArrayList<Integer> customer;
+    int val,n;
+    int finaldata;
+    @Before
+    public void createObjectForCustomerBO() {
+        customerBO = new CustomerBO();
+    }
+    @Test
+    public void testCustomerCount() {
+        customer = new ArrayList<Integer>();
+        customer.add(10);
+        customer.add(20);
+        val = 10;
+        finaldata = customerBO.getCustomerCount(customer, val);
+        assertEquals(0,finaldata);
+    }
+}
+
+End Sub
+Sub LC_3_Junit_Roles_who_have_maximum_privileges()
+----------------------RoleJUnit.java
+import org.junit.*;
+import static org.junit.Assert.*;
+public class RoleJUnit {
+    RoleBO bo;
+     String privilegeDetails,privilage[];
+     @Before
+    public void objectCeration()
+    {
+        bo = new RoleBO();
+    }
+    @Test
+    public void testFindRoleWithMaxPrivilege()
+    {
+         Role role[] = new Role[2];
+         role[0] = new Role();
+         role[0].setName("Sam") ;
+         privilegeDetails = "Admin,Normal";
+         privilage =privilegeDetails.split(",");
+         Privilege[] p = new Privilege[privilage.length];
+         for(int j=0;j<privilage.length;j++){
+             p[j] = new Privilege(privilage[j]);
+         }
+         role[0].setPrivilege(p);
+         role[1] = new Role();
+         role[1].setName("Sam1") ;
+         privilegeDetails = "Admin";
+         privilage =privilegeDetails.split(",");
+         Privilege[] p1 = new Privilege[privilage.length];
+         for(int j=0;j<privilage.length;j++){
+             p1[j] = new Privilege(privilage[j]);
+         }
+         role[1].setPrivilege(p1);
+         Role[] rol = new RoleBO().findRoleWithMaxPrivilege(role);
+         assertArrayEquals(new String[] {"Sam","Admin,Normal,"},new String[] {rol[0].getName(),rol[0].getPrivilege()[0].getName()+","+rol[0].getPrivilege()[1].getName()+","});
+    }
+
+
+}
+
+
+
+End Sub
+Sub LC_4_Number_Equality()
+----------------------ShipmentJunit.java
+import org.junit.*;
+import static org.junit.Assert.*;
+public class ShipmentJunit {
+
+    ShipmentBO shipmentBO;
+    @Test
+    public void testLeftOutValue() {
+        int n = 2;
+        double a[] = new double[n];
+        a[0] = 100.00;
+        a[1] = 200.00;
+        shipmentBO = new ShipmentBO();
+        double value = shipmentBO.findLeftOutValue(a);
+        assertEquals(String.format("%.2f",100.00),String.format("%.2f",value));
+
+    }
+}
+
+End Sub
+Sub LC_5_Ports()
+-----------------ShipmentJUnit.java
+import static org.junit.Assert.assertArrayEquals;
+import org.junit.*;
+public class ShipmentJUnit {
+    int n;
+//  String[] actual;
+    @Test
+    public void testFindOneModes() {
+        n=2;
+        String input[] = new String[n];
+        input[0] =  "101|Sam|1|0|0";
+        input[1] =  "101|Ram|1|1|1";
+        ShipmentBO shipment = new ShipmentBO();
+        String[] actual = shipment.findOneModes(n, input);
+        assertArrayEquals(new String[] {"Sam",null}, actual);
+    }
+    @Test
+    public void testFindMultipleModes() {
+        n=2;
+        String input[] = new String[n];
+        input[0] =  "101|Sam|1|0|0";
+        input[1] =  "101|Ram|1|1|1";
+        ShipmentBO shipment = new ShipmentBO();
+        String[] actual = shipment.findMultipleModes(n, input);
+        assertArrayEquals(new String[] {"Ram",null}, actual);
+    }
+}
+
+End Sub
+Sub CC_7_Array_Equals()
+------------------------CargoJunit.java
+import static org.junit.Assert.assertArrayEquals;
+
+import org.junit.*;
+
+public class CargoJunit{
+    CargoBO cargoBO;
+
+@Before
+    public void init() {
+        cargoBO = new CargoBO();
+    }
+
+    @Test
+    public void testFindSpecificStatus() {
+        int n  = 2;
+        Cargo cargoArray[] = new Cargo[n];
+        cargoArray[0] = new Cargo();
+        String details = "sam,Sam cargo,100.00,150.00,New";
+        String[] splitedDetails = details.split(",");
+        cargoArray[0].setName(splitedDetails[0]);
+        cargoArray[0].setDescription(splitedDetails[1]);
+        cargoArray[0].setLength(Float.parseFloat(splitedDetails[2]));
+        cargoArray[0].setWidth(Float.parseFloat(splitedDetails[3]));
+        cargoArray[0].setStatus(splitedDetails[4]);
+        details = "sam1,Sam1 cargo,100.00,150.00,Old";
+        splitedDetails = details.split(",");
+        cargoArray[1] = new Cargo();
+        cargoArray[1].setName(splitedDetails[0]);
+        cargoArray[1].setDescription(splitedDetails[1]);
+        cargoArray[1].setLength(Float.parseFloat(splitedDetails[2]));
+        cargoArray[1].setWidth(Float.parseFloat(splitedDetails[3]));
+        cargoArray[1].setStatus(splitedDetails[4]);
+        String status = "New";
+        Cargo cargoarr[]= cargoBO.findSpecificStatus(cargoArray,n,status);
+
+        assertArrayEquals(new String[] {"sam","Sam cargo","100.0","150.0"},new String[] {cargoarr[0].getName(),cargoarr[0].getDescription(),String.format("%.1f",cargoarr[0].getLength()),String.format("%.1f",cargoarr[0].getWidth())});
+    }
+
+    @After
+    public void destroy() {
+        cargoBO = null;
+    }
+}
+
+End Sub
+Sub LC_3_Role_Details()
+-------------------------RoleBOJUnit.java------------------
+
+import static org.junit.Assert.*;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import org.junit.Test;
+public class RoleBOJUnit {
+    MockRoleDAO mocktest;
+    RoleBO roleBO;
+    List<Role> roleList1,roleList;
+
+    @Test
+    public void testGetAllRoles() {
+        mocktest = new MockRoleDAO();
+        roleList1 = mocktest.fetchAllRoles();
+        roleBO = new RoleBO();
+        roleList = roleBO.getAllRoles(mocktest);
+        if(roleList.size()==roleList1.size()){
+            for (int i=0;i<roleList.size();i++) {
+                assertEquals(roleList.get(i).getName(),roleList1.get(i).getName());
+            }
+        }else{
+            assertTrue(false);
+        }
+
+    }
+}
+class MockRoleDAO extends RoleDAO{
+    @Override
+    public ArrayList<Role> fetchAllRoles() {
+        Role roleIns;
+        ArrayList<Role> roleList = new ArrayList<Role>();
+        String [] temp;
+        String[] data  = {"1:Manager","2:Admin","3:Shipper","4:Maritime Operator"};
+        for(int i=0;i<data.length;i++) {
+            temp = data[i].split(":") ;
+            roleIns = new Role(Integer.parseInt(temp[0]), temp[1]);
+            roleList.add(roleIns);
+        }
+        return roleList;
+    }
+}
+End Sub
+Sub CC_5_JDBC_User_Role()
+----------------------UserBOJUnit.java
+import java.util.ArrayList;
+import static org.junit.Assert.*;
+import org.junit.*;
+
+public class UserBOJUnit {
+    ArrayList<User>roleList1,roleList;
+    MockUserDAO mocktest;
+    UserBO userBo ;
+    @Before
+    public void setUp() {
+        mocktest = new MockUserDAO();
+        userBo = new UserBO();
+
+    }
+@Test
+    public void testGetAllUsers() {
+
+        roleList1 = mocktest.fetchAllUsers();
+        roleList = userBo.getAllUsers(mocktest);
+        if(roleList.size()==roleList1.size()){
+            for (int i=0;i<roleList.size();i++) {
+                assertEquals(roleList.get(i).getName(),roleList1.get(i).getName());
+            }
+        }else{
+            assertTrue(false);
+        }
+
+    }
+}
+
+// Implement the MockUserDAO class
+class MockUserDAO extends UserDAO{
+    @Override
+    public ArrayList<User> fetchAllUsers(){
+        ArrayList<User> userList = new ArrayList<User>();
+        User user = null;
+        user = new User(1, "Jennifer",getRoleById(),getContactById());
+        userList.add(user);
+        return userList;
+    }
+
+    public Role getRoleById() {
+        Role role = null;
+        role = new Role(1, "Manager");
+        return role;
+    }
+
+    public Contact getContactById() {
+        Contact contact = null;
+        contact = new Contact(1,
+                        "43/d wareren road", "Chennai",
+                        "Tamilnadu");
+        return contact;
+    }
+}
+End Sub
+
+Sub SBA_1_Invoice_Search()
+---------------------InvoiceJUnit.java----------
+import java.util.List;
+import static org.junit.Assert.*;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
+
+public class InvoiceJUnit {
+
+    InvoiceBO invoiceBO;
+    List<Invoice> invoice;
+    @Before
+    public void createObjectForInvoiceBO() {
+
+        invoiceBO =  new InvoiceBO();
+
+    }
+    @Test
+    public void testFindInvoiceByAmount() throws InvalidAmountException {
+
+        Double amount = Double.parseDouble("38000.0");
+        invoice = invoiceBO.findInvoiceByAmount(amount);
+        if(invoice.size()==0) {
+            assertTrue(false);
+        }else {
+            assertEquals(String.valueOf(invoice.get(0).getTotalAmount()), "38000.0");
+        }
+
+    }
+    @Test(expected = InvalidAmountException.class)
+    public void testFindInvoiceByAmount_Exception() throws InvalidAmountException {
+
+        Double amount = Double.parseDouble("-1");
+        invoice = invoiceBO.findInvoiceByAmount(amount);
+        if(invoice.size()==0) {
+
+        }else {
+            assertEquals(String.valueOf(invoice.get(0).getTotalAmount()), "38000.0");
+        }
+
+    }
+    @Test
+    public void testFindPendingInvoice() throws InvalidAmountException {
+        invoice = invoiceBO.findPendingInvoice();
+        if(invoice.size()==0) {
+            assertTrue(false);
+        }else {
+            assertThat(invoice,hasSize(7));
+        }
+
+    }
+
+}
+
+End Sub
+Sub CC_1_Junit_Assert_that()
+-----------------------------ShipmentCheckJunit.java
+import static org.junit.Assert.assertThat;
+
+import java.text.SimpleDateFormat;
+import static org.hamcrest.Matchers.*;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+public class ShipmentCheckJunit {
+    List<Shipment> shipmentList;
+    ShipmentBO shipmentBO;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    @Before
+    public void shipmentObjectCreation() {
+        shipmentBO = new ShipmentBO();
+    }
+    @Test
+    public void testFilterShipmentById() throws Exception {
+        shipmentList = ShipmentDAO.shipmentList;
+        Shipment shipment = shipmentBO.filterShipmentById(45, shipmentList);
+        assertThat(shipment.getName(),is("Laptop"));
+    }
+
+    @Test
+    public void testDeleteShipmentDetails() throws Exception {
+        shipmentList = ShipmentDAO.shipmentList;
+        shipmentBO.deleteShipmentDetails(shipmentList, 85);
+        assertThat(shipmentList,hasSize(7));
+
+    }
+
+    @Test
+    public void testInsertShipmentDetails() throws Exception {
+        shipmentList = ShipmentDAO.shipmentList;
+        String daa = "86,Television1,11/11/2015,43";
+        shipmentBO.insertShipmentDetails(shipmentList,daa);
+        assertThat(shipmentList,hasSize(8));
+    }
+
+
+}
+
+End Sub
+Sub CC_4_Minimum_of_three_shipment_company_quote()
+--------------------ShipmentJUnit.java
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class ShipmentJUnit {
+    ShipmentBO shipmentBO;
+    @Before
+    public void createObjectForShipmentBO() {
+        shipmentBO = new ShipmentBO();
+    }
+    @Test
+    public void testMsc() {
+        int msc = 10;
+        int cosco = 20;
+        int em = 30;
+        String  minimal = shipmentBO.getMinimalCost(msc, cosco, em);
+        assertEquals("Mediterranean Shipping Company",minimal);
+    }
+    @Test
+    public void testCosco() {
+        int msc = 20;
+        int cosco = 10;
+        int em = 30;
+        String  minimal = shipmentBO.getMinimalCost(msc, cosco, em);
+        assertEquals("China Ocean Shipping Company(COSCO)",minimal);
+    }
+    @Test
+    public void testEm() {
+        int msc = 30;
+        int cosco = 20;
+        int em = 10;
+        String  minimal = shipmentBO.getMinimalCost(msc, cosco, em);
+        assertEquals("Evergreen Marine",minimal);
+    }
+}
+End Sub
+Sub CC_5_Item_Count_HashMap()
+-------------------------------------ItemJunit.java
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ItemJunit {
+
+    ItemBO itemBO;
+
+    @Before
+    public void init() {
+        itemBO = new ItemBO();
+    }
+
+    @Test
+    public void testItemCount() {
+        int numberOfPurchases =1;
+        String[] purchaseDetails= {"1,Mobile,1000"};
+         HashMap<String,Integer> hashMap = new ItemBO().findItemCount(purchaseDetails, numberOfPurchases);
+         if(hashMap.size()>0) {
+             for(Map.Entry<String,Integer> m:hashMap.entrySet()){
+                 assertEquals(Integer.parseInt("1"),Integer.parseInt(m.getValue().toString()));
+             }
+         }else {
+             assertTrue(false);
+         }
+
+    }
+
+    @After
+    public void destroy() {
+        itemBO = null;
+    }
+
+}
+
+End Sub
+Sub CC_6_Email_Validation()
+--------------------------ValidationJunit.java
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ValidationJunit {
+    ValidationBO validationBO;
+    String email;
+    @Before
+    public void init() {
+        validationBO =  new ValidationBO();
+    }
+
+    @Test
+    public void testValidEmail() {
+        email = "123@gmail.com";
+        assertTrue(validationBO.validateEmail(email));
+    }
+
+    @Test
+    public void testInvalidEmail() {
+        email = "123gmail.com";
+        assertFalse(validationBO.validateEmail(email));
+    }
+
+    @After
+    public void destroy() {
+        validationBO = null;
+    }
+}
+
+End Sub
+Sub CC_2_Find_virus_from_words_using_contains()
+----------------------------------DocumentJUnit.java
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+
+public class DocumentJUnit {
+    DocumentBO document;
+    String word;
+    String virus;
+    @Test
+    public void testFindVirus() {
+        document = new DocumentBO();
+        word =  "data";
+        virus = "New";
+        String data= document.findVirus(word, virus);
+        assertNotNull(data);
+    }
+}
+
+End Sub
+
+Sub CC_3_Junit_Email_Validation()
+------------------------------------ShipmentJunit.java
+import static org.junit.Assert.assertThat;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJunit {
+    ShipmentBO shipmentBO ;
+    @Before
+    public void createObjectForEmailGenerator() {
+        shipmentBO= new ShipmentBO();
+    }
+    @Test
+     public void testEmailId() throws ParseException {
+         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String name,dob;
+        name = "Sam";
+        dob = "01/12/1994";
+        Date date = sdf.parse(dob);
+        ShipmentBO shipmentBO = new ShipmentBO();
+        String email = shipmentBO.generateEmailId(name, date);
+        assertThat(email, EmailIdChecker.isEmailIdChecker());
+
+    }
+}
+
+    class EmailIdChecker extends TypeSafeMatcher<String>{
+
+        @Override
+        public void describeTo(Description arg0) {
+            // TODO Auto-generated method stub
+            arg0.appendValue(arg0);
+        }
+
+        @Override
+        protected boolean matchesSafely(String arg0) {
+            // TODO Auto-generated method stub
+            return arg0.equals("sam1994@gmail.com");
+        }
+        public static Matcher<String> isEmailIdChecker() {
+            return new EmailIdChecker();
+        }
+        //fill code here.
+    }
+
+End Sub
+Sub CC_4_Shipping_Charge()
+------------------------ShipmentJUnit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJUnit {
+    ShipmentBO shipmentBo;
+    double delta = 0;
+    double weight,distance;
+    String mode;
+
+    @Before
+    public void setup() {
+        shipmentBo = new ShipmentBO();
+    }
+
+    @Test
+    public void testEvaluateShippingCharge_forRoad() {
+        weight = 100;
+        distance =  200;
+        mode ="Road";
+        delta=shipmentBo.evaluateShippingCharge(weight, distance, mode);
+        assertEquals("10.00", String.format("%.2f", delta));
+    }
+
+    @Test
+    public void testEvaluateShippingCharge_forSea() {
+        weight = 100;
+        distance =  200;
+        mode ="Sea";
+        delta=shipmentBo.evaluateShippingCharge(weight, distance, mode);
+        assertEquals("14.28", String.format("%.2f", delta));
+    }
+
+    @Test
+    public void testEvaluateShippingCharge_forAir() {
+        weight = 100;
+        distance =  200;
+        mode ="Air";
+        delta=shipmentBo.evaluateShippingCharge(weight, distance, mode);
+        assertEquals("322.00", String.format("%.2f", delta));
+    }
+}
+
+End Sub
+Sub CC_5_Password_Exception()
+--------------------------------PasswordExceptionJunit.java
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class PasswordExceptionJunit {
+    UserBO userbo;
+    @Before
+    public void userObjectCreation() {
+        userbo = new UserBO();
+    }
+    @Test
+    public void testPasswordException() throws WeakPasswordException {
+        String userName = "Sam";
+        String password = "Sam@1234";
+        String address = "Chennai";
+        User user = new User(userName, password, address);
+         userbo.validatePassword(user);
+         assertTrue(true);
+
+
+    }
+
+}
+
+End Sub
+Sub CC_6_Shipment_Item()
+------------------------ShippmentJUnit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShippmentJUnit {
+    ShipmentBO shipmentBO;
+    Integer itemNo,weight,capacity;
+    @Before
+    public void objectCeration()
+    {
+        shipmentBO = new ShipmentBO();
+    }
+    @Test
+    public void testShippedItemCount()
+    {
+        itemNo =2;
+        weight = 1000;
+        capacity = 1500;
+        int noOfShippedItems = shipmentBO.findShippedItemCount(itemNo, weight, capacity);
+        assertEquals(1, noOfShippedItems);
+    }
+    @Test
+    public void testLeftOutCount()
+    {
+        itemNo =2;
+        weight = 1000;
+        capacity = 1500;
+        int noOfLeftOutItems = shipmentBO.findShippedItemCount(itemNo, weight, capacity);
+        assertEquals(1, noOfLeftOutItems);
+    }
+
+
+}
+
+End Sub
+Sub CC_7_Total_amount()
+----------------------------TaxJUnit.java
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class TaxJUnit {
+    TaxBO taxBO;
+    @Before
+    public void createObjectForTaxBO() {
+        //fill the code
+    }
+    @Test
+    public void testTaxes() {
+        int choice = 1 ;
+        double amount = 200;
+        double total = new TaxBO().calculateNetAmount(choice, amount);
+        assertEquals("210.00", String.format("%.2f",total));
+    }
+}
+End Sub

@@ -1,0 +1,55 @@
+Shipment Delivery:
+
+import static org.junit.Assert.*;
+
+import java.text.ParseException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+public class ShipmentJunit {
+	
+	ShipmentBO shipmentBO;
+	
+	@Before
+	public void init() {
+		//fill the code
+		shipmentBO = new ShipmentBO();
+	}
+	
+	@Test
+	public void testDeliveredOnTime() throws ParseException {
+		//fill the code
+		assertEquals("Delivered on time",shipmentBO.findDeliveryType("2017-02-15", "2017-02-15"));
+	}
+	
+	@Test
+	public void testDeliveredOnDelay() throws ParseException {
+		//fill the code
+		assertEquals("Delayed",shipmentBO.findDeliveryType("2017-02-15", "2017-02-17"));
+	}
+	
+	@Test
+	public void testDeliveredInAdvance() throws ParseException {
+		//fill the code
+		assertEquals("Delivered in advance",shipmentBO.findDeliveryType("2017-02-15", "2017-02-10"));
+	}
+	
+	/*@Test
+	public void testOutOfDateDelivery() throws ParseException{
+		//fill the code
+		assertEquals("Delivered out of date",shipmentBO.findDeliveryType("2017/22-15", "2017-02-10"));
+	}*/
+	
+	@After
+	public void destroy() {
+		//fill the code
+		shipmentBO = null;
+	}
+}
+
+
+--------------------------------------------------------------------------------------------------
+

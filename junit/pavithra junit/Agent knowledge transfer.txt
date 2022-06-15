@@ -1,0 +1,494 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+public class DBConnection {
+	public static Connection getConnection() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+          //fill your code
+		
+		ResourceBundle rb= ResourceBundle.getBundle("mysql");
+		String url = rb.getString("db.url");
+		String username = rb.getString("db.username");
+		String password = rb.getString("db.password");
+		Connection connect = null;
+		Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+		connect = DriverManager.getConnection(url,username,password);
+		
+      return connect;
+	}
+
+}
+
+
+
+public class InvalidInvoiceNumberException extends Exception {
+
+	InvalidInvoiceNumberException(String s){  
+		  super(s);  
+		 }  
+		
+}
+
+
+
+
+
+public class Invoice {
+	Integer id;
+	String customerName;
+	String invoiceNumber;
+	Double amount;
+	Double totalAmount;
+	
+	public Invoice(){}
+	public Invoice(Integer id, String customerName, String invoiceNumber,
+			Double amount,Double totalAmount){
+		this.id = id;
+		this.customerName = customerName;
+		this.invoiceNumber = invoiceNumber;
+		this.amount = amount;
+		this.totalAmount = totalAmount ;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+	public String getInvoiceNumber() {
+		return invoiceNumber;
+	}
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
+	}
+	public Double getAmount() {
+		return amount;
+	}
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+		
+	
+}
+
+
+
+import java.util.List;
+import java.io.*;
+import java.sql.SQLException;
+public class Main {
+    
+    public static void main(String agrs[]) throws IOException,InvalidInvoiceNumberException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+    	
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		Integer invoiceId,vat,cst,travel;
+		SalesInvoiceBO salesInvoiceBO = new SalesInvoiceBO();	
+		ServiceInvoiceBO serviceInvoiceBO = new ServiceInvoiceBO();
+		
+		System.out.println("1).Sales Tax");
+		System.out.println("2).Service Tax");		
+		Integer ch = Integer.parseInt(br.readLine());
+				
+		if(ch==1){
+		 List<SalesInvoice> salesList = salesInvoiceBO.listSalesInvoice();
+		 System.out.format("%s %8s %8s %8s\n","Id","VatTax","CstTax","Invoice Number");
+		 for(SalesInvoice salesListIns:salesList){
+			 System.out.format("%s %7s %7s %7s\n",salesListIns.getId(),salesListIns.getVatTaxPercentage(),salesListIns.getCstTaxPercentage(),salesListIns.getInvoiceNumber());		     		 
+		 }	
+		 
+		
+		 System.out.println("Enter the invoice number");
+			 String salesInvoiceNumber = br.readLine();	
+			 
+			 try {
+				 //fill the code
+			
+				 //SalesInvoice and Exception handling
+			 if(salesInvoiceNumber.startsWith("INV") && salesInvoiceNumber.substring(4, 9).matches("[0-9]+")&& salesInvoiceNumber.substring(10).matches("[A-Z]+"))
+			 {
+			 
+			 SalesInvoice salesInvoice= salesInvoiceBO.getSalesInvoice(salesInvoiceNumber);
+			
+			
+			  System.out.println("Enter the vat tax");
+						 vat = Integer.parseInt(br.readLine());
+						  System.out.println("Enter the cst tax");
+				         cst = Integer.parseInt(br.readLine());
+				         //fill the code   
+				         salesInvoice.vatTaxPercentage=vat;
+				         salesInvoice.cstTaxPercentage=cst;
+				         salesInvoiceBO.updateTaxPercentage(salesInvoice);
+				         
+				         Double totalAmount=salesInvoice.computeTax();
+				          System.out.println("TotalAmount "+totalAmount);
+			 }else
+			 {
+				 throw new InvalidInvoiceNumberException("Invalid invoice number");
+			 }
+		}catch(InvalidInvoiceNumberException e)
+		{
+			System.out.println(e);
+		}
+		}
+		else{
+		 List<ServiceInvoice> serviceList = serviceInvoiceBO.listServiceInvoice();	
+		 System.out.format("%s %7s %7s\n","Id","TravelTax","Invoice Number");
+		 for(ServiceInvoice serviceListIns:serviceList){
+		 System.out.format("%s %7s %7s\n",serviceListIns.getId(),serviceListIns.getTravelTaxPercentage(),serviceListIns.getInvoiceNumber());
+		 } 		 
+		 
+		 System.out.println("Enter the invoice number");
+		 String serviceInvoiceNumber = br.readLine();	
+		 //fill the code	
+		 
+		 //ServiceInvoice
+		 
+		 try {
+		 if(serviceInvoiceNumber.startsWith("INV") && serviceInvoiceNumber.substring(4, 9).matches("[0-9]+")&& serviceInvoiceNumber.substring(10).matches("[A-Z]+"))
+		 {
+		 ServiceInvoice serviceInvoice=serviceInvoiceBO.getServiceInvoice(serviceInvoiceNumber);
+		 
+		 System.out.println("Enter the travel tax");
+                 travel = Integer.parseInt(br.readLine());
+         //fill the code
+                 serviceInvoice.travelTaxPercentage=travel;
+                 serviceInvoiceBO.updateTaxPercentage(serviceInvoice);
+                 
+                Double  totalAmount=serviceInvoice.computeTax();
+         System.out.println("TotalAmount "+totalAmount);
+		 }else
+		 {
+			 throw new InvalidInvoiceNumberException("Invalid invoice number");
+		 }
+		
+		}catch(InvalidInvoiceNumberException e)
+		{
+			System.out.println(e);
+		}
+		}
+		
+	}		
+}
+
+public class SalesInvoice extends Invoice{
+
+   Integer vatTaxPercentage;
+   Integer cstTaxPercentage;
+	
+   public SalesInvoice(){
+	   super();
+   }
+   public SalesInvoice(Integer id, String customerName, String invoiceNumber,
+			Double amount,Double balanceAmount,Integer vatTaxPercentage,Integer cstTaxPercentage) {
+	super(id,customerName,invoiceNumber,amount,balanceAmount);
+	this.vatTaxPercentage = vatTaxPercentage;
+	this.cstTaxPercentage = cstTaxPercentage;
+   }
+
+   public Integer getVatTaxPercentage() {
+	return vatTaxPercentage;
+   }
+
+
+   public void setVatTaxPercentage(Integer vatTaxPercentage) {
+	this.vatTaxPercentage = vatTaxPercentage;
+	
+   }  
+
+
+   public Integer getCstTaxPercentage() {
+	return cstTaxPercentage;
+   }
+
+
+   public void setCstTaxPercentage(Integer cstTaxPercentage) {
+	this.cstTaxPercentage = cstTaxPercentage;
+   }
+
+
+   public Double computeTax(){
+	   
+	   this.amount=this.amount+(this.amount*(this.cstTaxPercentage+this.vatTaxPercentage)/100);
+	return amount;
+     //fill your code	
+   }
+	
+	
+}
+
+import java.sql.SQLException;
+import java.util.List;
+
+public class SalesInvoiceBO {
+
+	  public void updateTaxPercentage(SalesInvoice salesInvoice) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+	    //fill your code
+		  SalesInvoiceDAO salesInvoiceDAO=new SalesInvoiceDAO();
+		  salesInvoiceDAO.updateTaxPercentage(salesInvoice);
+	   }
+	  
+	  
+	  public List<SalesInvoice> listSalesInvoice() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+           //fill your code
+		  SalesInvoiceDAO salesInvoiceDAO=new SalesInvoiceDAO();
+		  List<SalesInvoice> salesInv=salesInvoiceDAO.listSalesInvoiceDetails();
+		  
+		  return salesInv;
+		  
+       	  }
+	  
+	  
+       public SalesInvoice getSalesInvoice(String SalesInvoiceNumber) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+    	   
+           //fill your code
+    	  
+    	   SalesInvoiceDAO salesInvoiceDAO=new SalesInvoiceDAO();
+    	   SalesInvoice salesInvoice=salesInvoiceDAO.getSalesInvoice(SalesInvoiceNumber);
+    	   return salesInvoice;
+       }
+}
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SalesInvoiceDAO {
+	
+    public List<SalesInvoice> listSalesInvoiceDetails() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+      //fill your code
+    	SalesInvoice salesInvoice=null;
+    	Connection connection=null;
+    	Double balAmt=0.0;
+    	List<SalesInvoice> saleInv=new ArrayList<SalesInvoice>();
+    	try {
+    		connection= DBConnection.getConnection();
+    		
+    		 PreparedStatement ps=connection.prepareStatement("select sales_invoice.id,sales_invoice.vat_Tax_Percentage,sales_invoice.cst_Tax_Percentage,invoice.customer_name,invoice.invoice_number,invoice.amount,invoice.total_amount from sales_invoice join invoice where sales_invoice.id=invoice.id");
+    		 ResultSet rs= ps.executeQuery();
+    		 while(rs.next())
+   		  {
+    			 balAmt=rs.getDouble("total_amount")-rs.getDouble("amount");
+    			 salesInvoice=new SalesInvoice(rs.getInt("id"), rs.getString("customer_name"), rs.getString("invoice_number"),
+    						rs.getDouble("amount"),balAmt,rs.getInt("vat_Tax_Percentage"),rs.getInt("cst_Tax_Percentage"));
+    			 saleInv.add(salesInvoice);
+   		  }
+    		 
+    	}finally {
+    		if(connection!=null)
+				connection.close();
+    	}
+		return saleInv;
+    }
+
+   public SalesInvoice getSalesInvoice(String salesInvoiceNumber) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+     //fill your code  	   
+	   SalesInvoice salesInvoice=null;
+	   Connection connection=null;
+	   Double balAmt=0.0;
+	   try {
+   		connection= DBConnection.getConnection();
+   		PreparedStatement ps=connection.prepareStatement("select sales_invoice.id,sales_invoice.vat_Tax_Percentage,sales_invoice.cst_Tax_Percentage,invoice.customer_name,invoice.invoice_number,invoice.amount,invoice.total_amount from sales_invoice join invoice where invoice.invoice_number=? and invoice.id= sales_invoice.id");
+   		ps.setString(1, salesInvoiceNumber); 
+   		ResultSet rs= ps.executeQuery();
+   	 while(rs.next())
+		  {
+			 balAmt=rs.getDouble("total_amount")-rs.getDouble("amount");
+			 salesInvoice=new SalesInvoice(rs.getInt("id"), rs.getString("customer_name"), rs.getString("invoice_number"),
+						rs.getDouble("amount"),balAmt,rs.getInt("vat_Tax_Percentage"),rs.getInt("cst_Tax_Percentage"));
+			
+		  }
+   		 
+   	}finally {
+   		if(connection!=null)
+				connection.close();
+   	}
+	return salesInvoice;
+
+   }   
+   public void updateTaxPercentage(SalesInvoice salesInvoice) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+      //fill your code	
+	   Connection connection=null;
+	   try {
+	   		connection= DBConnection.getConnection();
+	   		
+	   		PreparedStatement usSInv=connection.prepareStatement("update sales_invoice set vat_Tax_Percentage=? ,cst_Tax_Percentage=? where id=?");
+	   		usSInv.setInt(1,salesInvoice.vatTaxPercentage);
+	   		usSInv.setInt(2,salesInvoice.cstTaxPercentage);
+	   		usSInv.setInt(3, salesInvoice.id);
+	   	   usSInv.executeUpdate();
+	   	}finally {
+	   		if(connection!=null)
+					connection.close();
+	   	}
+   }
+   
+   
+}
+
+
+
+public class ServiceInvoice extends Invoice {
+	
+	Integer travelTaxPercentage;
+	
+	ServiceInvoice(){
+		super();
+	}
+	ServiceInvoice(Integer id, String customerName, String invoiceNumber,
+			Double amount,Double balanceAmount,Integer travelTaxPercentage){
+	super(id,customerName,invoiceNumber,amount,balanceAmount);
+        this.travelTaxPercentage = travelTaxPercentage;
+	}
+	
+	public Integer getTravelTaxPercentage() {
+		return travelTaxPercentage;
+	}
+
+
+	public void setTravelTaxPercentage(Integer travelTaxPercentage) {
+		this.travelTaxPercentage = travelTaxPercentage;
+	}
+
+
+	 public Double computeTax(){
+	   //fill your code	
+		 this.amount=this.amount+(this.amount*(this.travelTaxPercentage)/100);
+			return amount;
+	 }
+			
+	
+}
+
+import java.sql.SQLException;
+import java.util.List;
+
+public class ServiceInvoiceBO {
+
+	  public void updateTaxPercentage(ServiceInvoice serviceInvoice) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+	      //fill your code
+		  ServiceInvoiceDAO serviceInvoiceDAO=new ServiceInvoiceDAO();
+		  serviceInvoiceDAO.updateTaxPercentage(serviceInvoice);
+	   }
+	  
+          public List<ServiceInvoice> listServiceInvoice() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+           //fill your code
+        	  ServiceInvoiceDAO serviceInvoiceDAO=new ServiceInvoiceDAO();
+        	  List<ServiceInvoice> servlist=serviceInvoiceDAO.listServiceInvoiceDetails();
+        	  
+        	  return servlist;
+           }
+          
+          public ServiceInvoice getServiceInvoice(String serviceInvoiceNumber) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+           //fill your code
+        	  ServiceInvoiceDAO serviceInvoiceDAO=new ServiceInvoiceDAO();
+        	  ServiceInvoice serviceInvoice=serviceInvoiceDAO.getServiceInvoice(serviceInvoiceNumber);
+        	  
+        	  return serviceInvoice;
+           }
+}
+
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServiceInvoiceDAO {
+	
+    public List<ServiceInvoice> listServiceInvoiceDetails() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+     //fill your code
+    	ServiceInvoice serviceInvoice=null;
+    	Connection connection=null;
+    	Double balAmt=0.0;
+    	List<ServiceInvoice> servInv=new ArrayList<ServiceInvoice>();
+    	try {
+    		connection= DBConnection.getConnection();
+    		
+    		 PreparedStatement ps=connection.prepareStatement("select service_invoice.id,service_invoice.travel_Tax_Percentage,invoice.customer_name,invoice.invoice_number,invoice.amount,invoice.total_amount from service_invoice join invoice where service_invoice.id=invoice.id");
+    		 ResultSet rs= ps.executeQuery();
+    		 while(rs.next())
+   		  {
+    			 balAmt=rs.getDouble("total_amount")-rs.getDouble("amount");
+    			 serviceInvoice=new ServiceInvoice(rs.getInt("id"), rs.getString("customer_name"), rs.getString("invoice_number"),
+    						rs.getDouble("amount"),balAmt,rs.getInt("travel_Tax_Percentage"));
+    			 servInv.add(serviceInvoice);
+   		  }
+    		 
+    	}finally {
+    		if(connection!=null)
+				connection.close();
+    	}
+    	return servInv;
+    }
+
+   public ServiceInvoice getServiceInvoice(String serviceInvoiceNumber) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+     //fill your code	 
+	   ServiceInvoice srviceInvoice=null;
+	   Connection connection=null;
+	   Double balAmt=0.0;
+	   try {
+   		connection= DBConnection.getConnection();
+   		PreparedStatement ps=connection.prepareStatement("select service_invoice.id,service_invoice.travel_Tax_Percentage,invoice.customer_name,invoice.invoice_number,invoice.amount,invoice.total_amount from service_invoice join invoice where invoice.invoice_number=? and invoice.id= service_invoice.id");
+   		ps.setString(1, serviceInvoiceNumber); 
+   		ResultSet rs= ps.executeQuery();
+   	 while(rs.next())
+		  {
+			 balAmt=rs.getDouble("total_amount")-rs.getDouble("amount");
+			 srviceInvoice=new ServiceInvoice(rs.getInt("id"), rs.getString("customer_name"), rs.getString("invoice_number"),
+						rs.getDouble("amount"),balAmt,rs.getInt("travel_Tax_Percentage"));
+			
+		  }
+   		 
+   	}finally {
+   		if(connection!=null)
+				connection.close();
+   	}
+	return srviceInvoice;
+     
+	   
+   }   
+   public void updateTaxPercentage(ServiceInvoice serviceInvoice) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException{
+       //fill your code	 
+	   Connection connection=null;
+	   try {
+	   		connection= DBConnection.getConnection();
+	   		
+	   		
+	   		PreparedStatement usSInv=connection.prepareStatement("update service_invoice set travel_Tax_Percentage=?  where id=?");
+	   		usSInv.setInt(1,serviceInvoice.travelTaxPercentage);
+	   		usSInv.setInt(2, serviceInvoice.id);
+	   		usSInv.executeUpdate();
+	   	}finally {
+	   		if(connection!=null)
+					connection.close();
+	   	}
+   }
+   
+   
+}
+
+
+db.url=jdbc:mysql://localhost:3306/invoice
+db.username=root
+db.password=test
+

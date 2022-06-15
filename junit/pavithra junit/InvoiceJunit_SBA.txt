@@ -1,0 +1,49 @@
+InvoiceJunit.java
+
+import java.util.List;
+
+import org.junit.*;
+import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+
+public class InvoiceJUnit {
+
+InvoiceBO invoiceBO;
+    
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    
+    @Before
+    public void createObjectForInvoiceBO() {
+        //fill the code
+        invoiceBO = new InvoiceBO();
+    }
+    @Test
+    public void testFindInvoiceByAmount() throws InvalidAmountException {
+        //fill the code
+        assertThat(invoiceBO.findInvoiceByAmount(38000.0),containsInAnyOrder(new Invoice(101,"Ricky",5,38000.0,4000.0,"Pending")));
+        assertTrue(invoiceBO.findInvoiceByAmount(0.0).isEmpty());
+    }
+    @Test
+    public void testFindInvoiceByAmount_Exception() throws InvalidAmountException {
+        //fill the code
+        try{
+        invoiceBO.findInvoiceByAmount(-8.0);
+        fail();
+        } catch(InvalidAmountException e){
+            assertEquals(e.getMessage(),"Amount is Invalid");
+        }
+        
+    }
+    @Test
+    public void testFindPendingInvoice() {
+        //fill the code
+        assertThat(invoiceBO.findPendingInvoice(),containsInAnyOrder(new Invoice(101,"Ricky",5,38000.0,4000.0,"Pending"),new Invoice(102,"Jack",4,74000.0,21000.0,"Pending"),
+                new Invoice(104,"Peter",3,47000.0,8000.0,"Pending"),new Invoice(105,"Willium",8,68000.0,17000.0,"Pending"),
+                new Invoice(107,"John",6,85000.0,3000.0,"Pending"),new Invoice(108,"Parker",3,47000.0,8000.0,"Pending"),
+                new Invoice(109,"Augestine",8,68000.0,17000.0,"Pending")));
+        
+    }
+}

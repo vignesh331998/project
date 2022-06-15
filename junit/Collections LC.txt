@@ -1,0 +1,68 @@
+
+import org.junit.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import java.util.*;
+
+public class Junit {
+	
+	ShipmentEntityBO shipmentEntityBO;
+	ArrayList<ShipmentEntity> list;
+
+	@Before
+	public void createObjectForShipmentEntity()
+	{
+		//fill code here.
+		shipmentEntityBO = new ShipmentEntityBO();
+		list = new ArrayList<ShipmentEntity>();
+	}
+	
+
+	@Test
+	public void testListofShipmentEntity()
+	{
+	//fill code here.
+		
+		shipmentEntityBO.addShipmentEntityToList(list, "103,Mike Hastings,3514537165,540000300,Sydney");
+		assertThat(list, containsInAnyOrder(new ShipmentEntity(103,"Mike Hastings","3514537165", Long.parseLong("540000300"),"Sydney")));
+	}
+	
+}
+
+
+------------------------------------------------------------------------------------------------------------------
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+import java.util.*;
+
+public class ShipmentJUnit {
+	ShipmentBO shipmentBO;
+	ArrayList<String> shipmentId;
+	
+	@Before
+	public void createObjectForShipmentBO() {
+		//fill the code
+		shipmentBO = new ShipmentBO();
+		shipmentId = new ArrayList<String>();		
+	}
+	
+	@Test
+	public void testUniqueShipmentByCode() {
+		//fill the code
+		shipmentId.add("BLUDR65");
+		shipmentId.add("FEDX32");
+		shipmentId.add("HALD90");
+		shipmentId.add("FEDX87");
+		shipmentId.add("BLUDR90");
+		HashSet<String> str = new HashSet<>();
+		str.add("BLUDR65");
+		str.add("BLUDR90");
+		assertEquals(shipmentBO.findShipmentByCode(shipmentId, "BLUDR"),str);
+		//assertThat(str, contains("BLUDR90"));
+	}
+}
+
+
+---------------------------------------------------------------------------------------------------------------

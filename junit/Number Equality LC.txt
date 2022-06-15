@@ -1,0 +1,181 @@
+import org.junit.Before;
+
+import static org.junit.Assert.*;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.*;
+
+public class CargoJUnit {
+	CargoBO cargobo;
+	@Before
+	public void createObjectForCargo() {
+		//fill the code
+		cargobo = new CargoBO();
+	}
+	
+	@Test
+	public void testCargoDetails() {
+		//fill the code
+		assertTrue(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("abc", "desc1", 10.30, 10.25), cargobo.cargoDetails("abc", "desc1", 10.30, 10.25)));
+		assertTrue(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("ght", "desc2", 120.08, 85.95), cargobo.cargoDetails("ght", "desc2", 120.08, 85.95)));
+		assertFalse(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("xyz", "ghyuii", 58.63, 74.02), cargobo.cargoDetails("ikh", "ghyuii", 58.63, 74.02)));
+		assertFalse(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("bhy", "oksdf", 69.36, 125.30), cargobo.cargoDetails("bhy", "oksdf", 85.93, 125.30)));
+		assertFalse(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("hds", "ghytd", 85.01, 74.4), cargobo.cargoDetails("hds", "gbytd", 85.01, 74.4)));
+		assertFalse(EqualsBuilder.reflectionEquals(cargobo.cargoDetails("bhh", "olsdf", 69.46, 115.30), cargobo.cargoDetails("bhh", "olsdf", 69.46, 116.30)));
+	}
+	
+}
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Number Equality: ((Not working)
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJunit {
+	
+	ShipmentBO shipmentBO;
+	
+	@Before
+	public void intial(){
+		shipmentBO = new ShipmentBO();
+	}
+	
+	@Test
+	public void testLeftOutValue() {
+		assertTrue(shipmentBO.findLeftOutValue(new double[] { 46.45, 23, 40, 68 }) == 23);
+
+		assertTrue(shipmentBO.findLeftOutValue(new double[] { 46.45, 23 }) == 23);
+
+		assertTrue(shipmentBO.findLeftOutValue(new double[] { 246.45, 823.43, 63.98, 67.45, 63.98 }) == 63.98);
+
+		assertTrue(shipmentBO.findLeftOutValue(new double[] { 246.45 }) == 246.45);
+
+		}
+
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Port:
+
+import org.junit.*;
+import static org.junit.Assert.*;
+
+public class ShipmentJUnit {
+	ShipmentBO shipmentBO;
+	
+	@Before
+	public void intial(){
+		shipmentBO = new ShipmentBO();
+	}
+	
+	@Test
+	public void testFindOneModes(){
+		String[] port1 = {"1|Hyd|1|0|0","1|Chn|0|1|0","1|Kol|0|1|1"};
+		assertArrayEquals(new String[] {"Hyd","Chn",null},shipmentBO.findOneModes(port1.length, port1));
+		String[] port2 = {"1|Hyd|1|1|0","1|Chn|0|1|0","1|Kol|0|1|1"};
+		assertArrayEquals(new String[] {"Chn",null,null},shipmentBO.findOneModes(port2.length, port2));
+	}
+	
+	@Test
+	public void testFindMultipleModes(){
+		String[] port1 = {"1|Hyd|1|0|0","1|Chn|0|1|0","1|Kol|0|1|1"};
+		assertArrayEquals(new String[] {"Kol",null,null},shipmentBO.findMultipleModes(port1.length, port1));
+		String[] port2 = {"1|Hyd|1|1|0","1|Chn|0|1|0","1|Kol|0|1|1"};
+		assertArrayEquals(new String[] {"Hyd","Kol",null},shipmentBO.findMultipleModes(port2.length, port2));		
+	}
+	
+	}
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Roles maximum priveleges: (Not working)
+
+import static org.junit.Assert.*;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.*;
+public class RoleJUnit {
+	
+	RoleBO roleBO;
+	
+	@Before
+	public void objectCreation()
+	{
+		//fill code here.
+		roleBO = new RoleBO();		
+	}
+	
+	@Test
+	public void test_findRoleWithMaxPrivilege()
+	{
+		//fill code here.
+		Role roles11 = new Role("Sindhu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent")});
+		Role roles12 = new Role("Bindu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent"),new Privilege("Supervisor")}); 
+		Role[] roles1 = {roles11,roles12};
+		assertArrayEquals(new Role[] {roles12},roleBO.findRoleWithMaxPrivilege(roles1));
+		
+		Role roles21 = new Role("Sindhu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent")});
+		Role roles22 = new Role("Bindu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent"),new Privilege("Supervisor")});
+		Role roles23 = new Role("xyz",new Privilege[] {new Privilege("Manager"),new Privilege("Abc"),new Privilege("Supervisor")});
+		Role[] roles2 = {roles21,roles22,roles23};
+		assertArrayEquals(new Role[] {roles22,roles23},roleBO.findRoleWithMaxPrivilege(roles2));
+		
+		Role roles31 = new Role("Sindhu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent")});
+		Role roles32 = new Role("Bindu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent"),new Privilege("Supervisor")});
+		Role roles33 = new Role("xyz",new Privilege[] {new Privilege("Manager"),new Privilege("Abc"),new Privilege("Supervisor"),new Privilege("Super")});
+		Role[] roles3 = {roles31,roles32,roles33};
+		assertArrayEquals(new Role[] {roles33},roleBO.findRoleWithMaxPrivilege(roles3));
+		
+		Role roles41 = new Role("Sindhu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent")});
+		Role roles42 = new Role("Bindu",new Privilege[] {new Privilege("Manager"),new Privilege("Agent"),new Privilege("Supervisor"),new Privilege("Super")});
+		Role roles43 = new Role("xyz",new Privilege[] {new Privilege("Manager"),new Privilege("Abc"),new Privilege("Supervisor"),new Privilege("Super")});
+		Role roles44 = new Role("xfz",new Privilege[] {new Privilege("Manager"),new Privilege("Abc"),new Privilege("Supervisor"),new Privilege("Super")});
+		Role[] roles4 = {roles41,roles42,roles43,roles44};
+		assertArrayEquals(new Role[] {roles42,roles44,roles43},roleBO.findRoleWithMaxPrivilege(roles4));
+
+	}
+	
+	
+}
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Number Equality:
+
+
+import java.util.ArrayList;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+public class CustomerJUnit {
+	CustomerBO customerBO;
+	ArrayList<Integer> customer = new ArrayList<Integer>();;
+	
+	@Before
+	public void createObjectForCustomerBO() {
+		//fill the code
+		customerBO = new CustomerBO();
+	}
+	
+	@Test
+	public void testCustomerCount() {
+		//fill the code
+		customer.add(2);
+		customer.add(10);
+		customer.add(2);
+		customer.add(10);
+		customer.add(12);
+		customer.add(14);
+		customer.add(10);
+		customer.add(10);
+		assertEquals(2,customerBO.getCustomerCount(customer, 1));
+		assertEquals(1,customerBO.getCustomerCount(customer, 2));
+		assertEquals(1,customerBO.getCustomerCount(customer, 3));
+	}
+}

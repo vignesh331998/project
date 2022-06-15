@@ -1,0 +1,53 @@
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.text.ParseException;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
+import org.junit.Test;
+public class CamelCaseJUnit {
+	CamelCaseBO camelCaseBO;
+	
+	@Before
+	public void createObjectForCamelCaseBO() {
+		//fill the code
+		camelCaseBO = new CamelCaseBO();
+	}
+	
+	@Test
+	public void testCamelCase() {
+		//fill the code
+		assertThat(camelCaseBO.toCamelCase("hyderabad"), CamelCaseChecker.checkCase("hyderabad"));
+		assertThat(camelCaseBO.toCamelCase("chennai port"), CamelCaseChecker.checkCase("chennaiPort"));
+		assertThat(camelCaseBO.toCamelCase("chennai   port"), CamelCaseChecker.checkCase("chennaiPort"));
+		//assertThat(camelCaseBO.toCamelCase("chennai a port"), CamelCaseChecker.checkCase("chennaiPort"));
+	}
+
+}
+
+class CamelCaseChecker {
+	 //fill the code
+	public static Matcher<String> checkCase(final String expected) {
+		return new TypeSafeMatcher<String>() {
+
+	@Override
+	public void describeTo(final Description description) {
+		description.appendText("Port is <")
+		.appendText(new CamelCaseBO().toCamelCase(expected)).appendText(">");
+	}
+
+	@Override
+	protected boolean matchesSafely(final String value) {
+		return expected.equals(value);
+	}
+
+	
+	@Override
+	public final void describeMismatchSafely(final String s, final Description mismatchDescription) {
+		mismatchDescription.appendText("the actual port was <").appendText(new CamelCaseBO().toCamelCase(s)).appendText(">");
+	}
+	};
+	}
+}

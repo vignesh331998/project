@@ -1,0 +1,264 @@
+import org.junit.*;
+import java.util.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+public class ShipmentJunit {
+	ShipmentEntityBO shipmentBO;
+
+	@Before
+	public void ShipmentEntityObjectCreation()
+	{
+		//fill code here.
+		shipmentBO = new ShipmentEntityBO();
+	}
+
+	@Test
+	public void testShipmentByShipper()
+	{
+		//fill code here.
+		ShipmentEntity se1=new ShipmentEntity(101, "Shipment1", "1234", (long) 150, "Agent");
+		ShipmentEntity se2=new ShipmentEntity(105, "Shipment2", "12345", (long) 150, "Agent");		
+		ShipmentEntity se3=new ShipmentEntity(106, "Shipment3", "123456", (long) 150, "Shipper");
+		List<ShipmentEntity> list = new ArrayList<ShipmentEntity>();
+		list.add(se1);
+		list.add(se2);
+		list.add(se3);		
+		assertThat(shipmentBO.filterShipmentByType(list, "Shipper"),hasSize(1));
+		assertThat(shipmentBO.filterShipmentByType(list, "Shipper"),hasItems(se3));		
+	}
+	
+	@Test
+	public void testShipmentByAgent()
+	{
+		//fill code here.
+		ShipmentEntity se1=new ShipmentEntity(101, "Shipment1", "1234", (long) 150, "Agent");
+		ShipmentEntity se2=new ShipmentEntity(105, "Shipment2", "12345", (long) 150, "Agent");		
+		ShipmentEntity se3=new ShipmentEntity(106, "Shipment3", "123456", (long) 150, "Shipper");
+		List<ShipmentEntity> list = new ArrayList<ShipmentEntity>();
+		list.add(se1);
+		list.add(se2);
+		list.add(se3);		
+		assertThat(shipmentBO.filterShipmentByType(list, "Agent"),hasSize(2));
+		assertThat(shipmentBO.filterShipmentByType(list, "Agent"),hasItems(se1,se2));	
+	}
+	
+}
+
+
+
+
+
+
+
+import java.util.Objects;
+
+
+public class ShipmentEntity {
+	private Integer id;
+	private String name;
+	private String accountNumber;
+	private Long creditLimit;
+	private String type;
+	public ShipmentEntity(){
+	}
+	public ShipmentEntity(Integer id, String name, String accountNumber, Long creditLimit, String type) {
+		this.id = id;
+		this.name = name;
+		this.accountNumber = accountNumber;
+		this.creditLimit = creditLimit;
+		this.type = type;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	public Long getCreditLimit() {
+		return creditLimit;
+	}
+	public void setCreditLimit(Long creditLimit) {
+		this.creditLimit = creditLimit;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ShipmentEntity shipmentEntity = (ShipmentEntity) o;
+        return Objects.equals(id , shipmentEntity.id) &&
+                Objects.equals(name, shipmentEntity.name) && 
+                accountNumber.equals(shipmentEntity.accountNumber) && 
+                Objects.equals(creditLimit, shipmentEntity.creditLimit) &&
+                type.equals(shipmentEntity.type)
+                ;
+    }
+	@Override
+    public int hashCode() {
+        return Objects.hash(id, name,accountNumber,creditLimit,type);
+    }
+	
+}
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Not passed:
+
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+import static org.hamcrest.CoreMatchers.*;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+
+public class ShipmentCheckJunit {
+	ShipmentBO shipmentBO;
+	SimpleDateFormat sdf;
+	@Before
+	public void shipmentObjectCreation()
+	{
+		//fill code here.
+		shipmentBO = new ShipmentBO();
+		sdf = new SimpleDateFormat("dd/MM/yyyy");
+	}
+	
+	@Test
+	public void testFilterShipmentById() throws Exception
+	{
+		//fill code here.
+		//assertTrue(EqualsBuilder.reflectionEquals(shipmentBO.filterShipmentById(45, ShipmentDAO.shipmentList),new Shipment(45,"Laptop",sdf.parse("12/10/2016"),15)));
+		//assertTrue(shipmentBO.filterShipmentById(45, ShipmentDAO.shipmentList).equals(new Shipment(45,"Laptop",sdf.parse("12/10/2016"),15)));
+		assertEquals(shipmentBO.filterShipmentById(45, ShipmentDAO.shipmentList),new Shipment(45,"Laptop",sdf.parse("12/10/2016"),15));
+		assertEquals(shipmentBO.filterShipmentById(65, ShipmentDAO.shipmentList),null);
+	}
+	
+	@Test
+	public void testDeleteShipmentDetails() throws Exception
+	{
+		//fill code here.
+		shipmentBO.deleteShipmentDetails(ShipmentDAO.shipmentList,55);
+		assertThat(ShipmentDAO.shipmentList,not(hasItems(new Shipment(55,"Samsung Mobile",sdf.parse("12/05/2013"),12))));
+		
+	}
+	
+	@Test
+	public void testInsertShipmentDetails() throws Exception
+	{
+		//fill code here.
+		shipmentBO.insertShipmentDetails(ShipmentDAO.shipmentList, "65,Laptop2,12/11/2016,12");
+		assertThat(ShipmentDAO.shipmentList,hasItems(new Shipment(65,"Laptop2",sdf.parse("12/11/2016"),12)));
+	}
+	
+	
+}
+
+
+
+
+
+
+
+
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+public class ShipmentBO {
+	
+	public Shipment filterShipmentById(Integer id,List<Shipment> shipmentList)
+	{
+		for(Shipment s : shipmentList)
+		{
+			if(Objects.equals(s.getId(), id))
+				return s;
+		}
+		return null;
+	}
+	public void deleteShipmentDetails(List<Shipment> shipmentList,Integer id)
+	{
+		
+		int i;
+		for(i=0;i<shipmentList.size();i++)
+			if(Objects.equals(id,shipmentList.get(i).getId()))
+				shipmentList.remove(i);
+	}
+	
+	public void insertShipmentDetails(List<Shipment> shipmentList, 
+			String shipmentDetails) throws Exception
+	{
+		List<Shipment> list = shipmentList;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		list.add(new Shipment(new Integer(shipmentDetails.split(",")[0]),
+				shipmentDetails.split(",")[1], sdf.parse(shipmentDetails.split(",")[2]),
+				new Integer(shipmentDetails.split(",")[3])));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+import java.text.SimpleDateFormat;
+import java.util.*;
+public class ShipmentDAO {
+	static List<Shipment> shipmentList = new ArrayList<Shipment>();
+	static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	static 
+	{
+		try
+		{
+			shipmentList .add(new Shipment(45,"Laptop",sdf.parse("12/10/2016"),15));
+			shipmentList .add(new Shipment(85,"Television",sdf.parse("11/11/2015"),43));
+			shipmentList .add(new Shipment(12,"Washing Machine",sdf.parse("26/04/2016"),55));
+			shipmentList .add(new Shipment(44,"Air Conditioner",sdf.parse("05/02/2014"),39));
+			shipmentList .add(new Shipment(11,"Air Cooler",sdf.parse("01/01/2015"),37));
+			shipmentList .add(new Shipment(77,"Personal Computer",sdf.parse("02/02/2017"),26));
+			shipmentList .add(new Shipment(55,"Samsung Mobile",sdf.parse("12/05/2013"),12));
+			shipmentList .add(new Shipment(22,"Home Theater",sdf.parse("15/12/2013"),22)
+					);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
+	}
+}

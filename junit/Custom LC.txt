@@ -1,0 +1,147 @@
+LC1:
+
+
+
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.text.ParseException;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
+import org.junit.Test;
+
+public class DateJUnit {
+DateValidationBO dateValidationBO;
+
+@Before
+public void createObjectForDateValidationBO() {
+dateValidationBO = new DateValidationBO();
+}
+
+@Test
+public void testFindValidDate() throws ParseException {
+	assertThat(dateValidationBO.findValidDate("03/27/2016"), DateChecker.checkDate("27/03/2016"));
+	assertThat(dateValidationBO.findValidDate("11/25/2017"),DateChecker.checkDate("25/11/2017") );
+	assertThat(dateValidationBO.findValidDate("12/24/2016"),DateChecker.checkDate("24/12/2016") );
+	//assertThat(dateValidationBO.findValidDate("03/27/2016"), DateChecker.checkDate("03/27/2016"));
+
+}
+}
+
+class DateChecker {
+public static Matcher<String> checkDate(final String expected) {
+	return new TypeSafeMatcher<String>() {
+
+@Override
+public void describeTo(final Description description) {
+	try {
+	description.appendText("Date is <")
+	.appendText(new DateValidationBO().findValidDate(expected).toString()).appendText(">");
+	} catch (ParseException e) {
+	e.printStackTrace();
+	}
+}
+
+@Override
+protected boolean matchesSafely(final String value) {
+	return expected.equals(value);
+}
+
+@Override
+public final void describeMismatchSafely(final String date, final Description mismatchDescription) {
+	mismatchDescription.appendText("the actual date was <").appendText(expected.toString()).appendText(">");
+}
+};
+}
+}
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+LC 2:
+
+import static org.junit.Assert.*;
+
+import java.text.ParseException;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class InvoiceJunit {
+
+	InvoiceBO invoiceBO;
+	
+	@Before
+	public void init() {
+		//fill the code
+		invoiceBO = new InvoiceBO();
+	}
+	
+	@Test
+	public void testGeneratedInvoiceId() {
+		assertThat(invoiceBO.generateInvoiceId("CU1"), CheckInvoiceId.checkInvoiceId("CUR00001"));
+		assertThat(invoiceBO.generateInvoiceId("CU01"), CheckInvoiceId.checkInvoiceId("CUR00001"));
+		assertThat(invoiceBO.generateInvoiceId("CU001"), CheckInvoiceId.checkInvoiceId("CUR00001"));
+		assertThat(invoiceBO.generateInvoiceId("CU0001"), CheckInvoiceId.checkInvoiceId("CUR00001"));
+		assertThat(invoiceBO.generateInvoiceId("CU00001"), CheckInvoiceId.checkInvoiceId("CUR00001"));
+		assertThat(invoiceBO.generateInvoiceId("CU111"), CheckInvoiceId.checkInvoiceId("CUR00111"));
+		assertThat(invoiceBO.generateInvoiceId("CU11"), CheckInvoiceId.checkInvoiceId("CUR00011"));
+		assertThat(invoiceBO.generateInvoiceId("CU1111"), CheckInvoiceId.checkInvoiceId("CUR01111"));
+		assertThat(invoiceBO.generateInvoiceId("CU11111"), CheckInvoiceId.checkInvoiceId("CUR11111"));
+
+		assertThat(invoiceBO.generateInvoiceId("AT2"), CheckInvoiceId.checkInvoiceId("AGT00002"));
+		assertThat(invoiceBO.generateInvoiceId("AT02"), CheckInvoiceId.checkInvoiceId("AGT00002"));
+		assertThat(invoiceBO.generateInvoiceId("AT002"), CheckInvoiceId.checkInvoiceId("AGT00002"));
+		assertThat(invoiceBO.generateInvoiceId("AT0002"), CheckInvoiceId.checkInvoiceId("AGT00002"));
+		assertThat(invoiceBO.generateInvoiceId("AT00002"), CheckInvoiceId.checkInvoiceId("AGT00002"));
+		assertThat(invoiceBO.generateInvoiceId("AT222"), CheckInvoiceId.checkInvoiceId("AGT00222"));
+		assertThat(invoiceBO.generateInvoiceId("AT22"), CheckInvoiceId.checkInvoiceId("AGT00022"));
+		assertThat(invoiceBO.generateInvoiceId("AT2222"), CheckInvoiceId.checkInvoiceId("AGT02222"));
+		assertThat(invoiceBO.generateInvoiceId("AT22222"), CheckInvoiceId.checkInvoiceId("AGT22222"));
+
+		assertThat(invoiceBO.generateInvoiceId("CY9"), CheckInvoiceId.checkInvoiceId("CMY00009"));
+		assertThat(invoiceBO.generateInvoiceId("CY09"), CheckInvoiceId.checkInvoiceId("CMY00009"));
+		assertThat(invoiceBO.generateInvoiceId("CY009"), CheckInvoiceId.checkInvoiceId("CMY00009"));
+		assertThat(invoiceBO.generateInvoiceId("CY0009"), CheckInvoiceId.checkInvoiceId("CMY00009"));
+		assertThat(invoiceBO.generateInvoiceId("CY00009"), CheckInvoiceId.checkInvoiceId("CMY00009"));
+		assertThat(invoiceBO.generateInvoiceId("CY999"), CheckInvoiceId.checkInvoiceId("CMY00999"));
+		assertThat(invoiceBO.generateInvoiceId("CY99"), CheckInvoiceId.checkInvoiceId("CMY00099"));
+		assertThat(invoiceBO.generateInvoiceId("CY9999"), CheckInvoiceId.checkInvoiceId("CMY09999"));
+		assertThat(invoiceBO.generateInvoiceId("CY99999"), CheckInvoiceId.checkInvoiceId("CMY99999"));
+
+		//assertThat(invoiceBO.generateInvoiceId("CU1"), CheckInvoiceId.checkInvoiceId("CU1"));
+		//assertThat(invoiceBO.generateInvoiceId("CY"), CheckInvoiceId.checkInvoiceId("CMY00000"));
+		//assertThat(invoiceBO.generateInvoiceId("CY231"), CheckInvoiceId.checkInvoiceId("CY231"));
+		//assertThat(invoiceBO.generateInvoiceId("AT12"), CheckInvoiceId.checkInvoiceId("AT12"));
+		//assertThat(invoiceBO.generateInvoiceId("AT1234"), CheckInvoiceId.checkInvoiceId("AT1234"));
+		//assertThat(invoiceBO.generateInvoiceId("CU123"), CheckInvoiceId.checkInvoiceId("CU123"));
+		//assertThat(invoiceBO.generateInvoiceId("CY12"), CheckInvoiceId.checkInvoiceId("CY12"));
+	}
+	
+	@After
+	public void destroy() {
+		//fill the code
+		invoiceBO = null;
+	}
+}
+
+class CheckInvoiceId {
+	public static Matcher<String> checkInvoiceId(final String actual) {
+		return new TypeSafeMatcher<String>() {
+
+			@Override
+			public void describeTo(Description description) {
+				throw new AssertionError("Invalid Format");
+			}
+
+			@Override
+			public boolean matchesSafely(String item) {
+				return actual.equals(item);
+			}
+		};
+	}
+}

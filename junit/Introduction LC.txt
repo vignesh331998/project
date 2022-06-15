@@ -1,0 +1,141 @@
+Valuable Customer:
+
+import static org.junit.Assert.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+import org.junit.*;
+
+import junit.framework.TestCase;
+
+import org.junit.*;
+
+
+public class CustomerJunit {
+	CustomerBO customerbo;
+	int noOfShipments;
+	@Before
+	public void createObjectForCustomerBO(){
+		customerbo = new CustomerBO();
+	}
+	
+
+	@Test
+	public void testValuableCustomer() {
+		//fill the code	
+		assertEquals("Valuable customer",customerbo.findValuableCustomerOrNot(21));
+		assertEquals("Valuable customer",customerbo.findValuableCustomerOrNot(30));
+		//TestCase.assertEquals("Valuable customer", customerbo.findValuableCustomerOrNot(25));
+	}
+	
+	@Test
+	public void testNonValuableCustomer() {
+		//fill the code
+		assertEquals("Not a valuable customer", customerbo.findValuableCustomerOrNot(15));
+		assertEquals("Not a valuable customer", customerbo.findValuableCustomerOrNot(20));
+		//TestCase.assertEquals("Not a valuable customer", customerbo.findValuableCustomerOrNot(15));
+
+	}
+	
+	@Test
+	public void testInvalidShipment() {
+		//fill the code
+		assertEquals("Invalid Input", customerbo.findValuableCustomerOrNot(-1));
+		assertEquals("Invalid Input", customerbo.findValuableCustomerOrNot(0));
+		//TestCase.assertEquals("Invalid Input", customerbo.findValuableCustomerOrNot(-1));
+	}
+
+}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+JUnit AssertEquals:
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class CompanyJunit {
+	
+	CompanyBO companyBO;
+	@Before
+	public void init(){
+		//fill the code
+		companyBO = new CompanyBO();
+	}
+	
+	@Test
+	public void testValidDiscount() {
+		//fill the code
+		assertEquals("Datex shipping offers discount",companyBO.hasDiscount(99, 600));
+		assertEquals("Datex shipping offers discount",companyBO.hasDiscount(150, 400));
+		assertEquals("Datex shipping offers discount",companyBO.hasDiscount(160, 499));
+	}
+	
+	@Test
+	public void testInvalidDiscount() {
+		//fill the code
+		assertEquals("Datex shipping offers no discount",companyBO.hasDiscount(100, 500));
+		assertEquals("Datex shipping offers no discount",companyBO.hasDiscount(200, 1000));
+	}
+}
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Evaluate Grade for Shipping Company:
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ShipmentJUnit {
+		ShipmentBO shipmentBO;
+		
+		@Before
+		public void initial(){
+			shipmentBO = new ShipmentBO();
+		}
+		@Test
+		public void testEvaluateGrade_invalidInput(){
+			assertEquals("Invalid Input",shipmentBO.evaluateGrade(-1,0));
+			assertEquals("Invalid Input",shipmentBO.evaluateGrade(0,-1));
+			assertEquals("Invalid Input",shipmentBO.evaluateGrade(-2,-10));
+		}
+		@Test
+		public void testEvaluateGrade_gradeA(){
+			assertEquals("A",shipmentBO.evaluateGrade(151,1501));
+			assertEquals("A",shipmentBO.evaluateGrade(160,1590));
+		}
+		@Test
+		public void testEvaluateGrade_gradeB(){
+			assertEquals("B",shipmentBO.evaluateGrade(126,1201));
+			assertEquals("B",shipmentBO.evaluateGrade(160,1300));
+			assertEquals("B",shipmentBO.evaluateGrade(130,1600));
+			assertEquals("B",shipmentBO.evaluateGrade(150,1500));
+		}
+		@Test
+		public void testEvaluateGrade_gradeC(){
+			assertEquals("C",shipmentBO.evaluateGrade(101,1001));
+			assertEquals("C",shipmentBO.evaluateGrade(110,1300));
+			assertEquals("C",shipmentBO.evaluateGrade(130,1100));
+			assertEquals("C",shipmentBO.evaluateGrade(125,1200));
+		}
+		@Test
+		public void testEvaluateGrade_gradeD(){
+			assertEquals("D",shipmentBO.evaluateGrade(76,701));
+			assertEquals("D",shipmentBO.evaluateGrade(85,1100));
+			assertEquals("D",shipmentBO.evaluateGrade(110,950));
+			assertEquals("D",shipmentBO.evaluateGrade(100,1000));
+		}
+		@Test
+		public void testEvaluateGrade_gradeE(){
+			assertEquals("E",shipmentBO.evaluateGrade(1,1));
+			assertEquals("E",shipmentBO.evaluateGrade(50,800));
+			assertEquals("E",shipmentBO.evaluateGrade(80,600));
+			assertEquals("E",shipmentBO.evaluateGrade(75,700));
+		}
+}
